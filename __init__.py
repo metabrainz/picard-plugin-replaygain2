@@ -1,23 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from picard.plugin3.api import PluginApi
-
-from picard.plugin3.api import (
-    Album,
-    BaseAction,
-    Cluster,
-    File,
-    OptionsPage,
-    Track,
-)
-
+import os
+import shutil
+import subprocess  # nosec: B404
 from enum import IntEnum
 from functools import partial
-import subprocess  # nosec: B404
-import shutil
-import os
-
-from PyQt6.QtWidgets import QFileDialog
 
 from picard.formats import (
     AiffFile,
@@ -36,13 +23,20 @@ from picard.formats import (
     WAVFile,
     WavPackFile,
 )
-
-
+from picard.plugin3.api import (
+    Album,
+    BaseAction,
+    Cluster,
+    File,
+    OptionsPage,
+    PluginApi,
+    Track,
+)
+from picard.track import NonAlbumTrack
 from picard.util import thread
-
+from PyQt6.QtWidgets import QFileDialog
 
 from .ui_options_replaygain2 import Ui_ReplayGain2OptionsPage
-
 
 CLIP_MODE_DISABLED = 0
 CLIP_MODE_POSITIVE = 1
@@ -110,13 +104,13 @@ def rsgain_found(rsgain_command, window):
 # Convert Picard settings dict to rsgain command line options
 def build_options(config):
     options = ["custom", "-O", "-s", "s"]
-    if api.plugin_config["album_tags"]:
+    if config["album_tags"]:
         options.append("-a")
-    if api.plugin_config["true_peak"]:
+    if config["true_peak"]:
         options.append("-t")
-    options += ["-l", str(api.plugin_config["target_loudness"])]
-    options += ["-c", CLIP_MODE_MAP[api.plugin_config["clip_mode"]]]
-    options += ["-m", str(api.plugin_config["max_peak"])]
+    options += ["-l", str(config["target_loudness"])]
+    options += ["-c", CLIP_MODE_MAP[config["clip_mode"]]]
+    options += ["-m", str(config["max_peak"])]
     return options
 
 
@@ -136,12 +130,12 @@ def parse_result(line):
 # see: https://datatracker.ietf.org/doc/html/rfc7845
 def format_r128(result, config):
     gain = float(result["gain"])
-    if api.plugin_config["opus_m23"]:
-        gain += float(-23 - api.plugin_config["target_loudness"])
+    if config["opus_m23"]:
+        gain += float(-23 - config["target_loudness"])
     return str(int(round(gain * 256.0)))
 
 
-def update_metadata(metadata, track_result, album_result, is_nat, opus_mode):
+def update_metadata(config, metadata, track_result, album_result, is_nat, opus_mode):
     for tag in TAGS:
         metadata.delete(tag)
 
@@ -155,21 +149,21 @@ def update_metadata(metadata, track_result, album_result, is_nat, opus_mode):
     if opus_mode in (OpusMode.STANDARD, OpusMode.BOTH):
         metadata.set("replaygain_track_gain", track_result["gain"] + " dB")
         metadata.set("replaygain_track_peak", track_result["peak"])
-        if api.plugin_config["album_tags"]:
+        if config["album_tags"]:
             if is_nat:
                 metadata.set("replaygain_album_gain", track_result["gain"] + " dB")
                 metadata.set("replaygain_album_peak", track_result["peak"])
             elif album_result is not None:
                 metadata.set("replaygain_album_gain", album_result["gain"] + " dB")
                 metadata.set("replaygain_album_peak", album_result["peak"])
-        if api.plugin_config["reference_loudness"]:
+        if config["reference_loudness"]:
             metadata.set(
                 "replaygain_reference_loudness",
-                f"{float(api.plugin_config['target_loudness']):.2f} LUFS",
+                f"{float(config['target_loudness']):.2f} LUFS",
             )
 
 
-def calculate_replaygain(input_objs, options):
+def calculate_replaygain(api: PluginApi, input_objs, options):
     # Make sure files are of supported type, build file list
     files = list()
     valid_list = list()
@@ -259,6 +253,7 @@ def calculate_replaygain(input_objs, options):
                 opus_mode = OpusMode.STANDARD
 
             update_metadata(
+                api.plugin_config,
                 file.metadata,
                 results[i],
                 album_result,
@@ -275,100 +270,101 @@ class ScanCluster(BaseAction):
     NAME = "Calculate Cluster Replay&Gain as Album..."
 
     def callback(self, objs):
-        if not rsgain_found(
-            self.api.plugin_config["rsgain_command"], self.tagger.window
-        ):
+        config = self.api.plugin_config
+        window = self.api.tagger.window
+
+        if not rsgain_found(config["rsgain_command"], window):
             return
         clusters = list(filter(lambda o: isinstance(o, Cluster), objs))
 
-        self.options = build_options(self.config)
+        self.options = build_options(config)
         num_clusters = len(clusters)
         if num_clusters == 1:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 "Calculating ReplayGain for %s...", clusters[0].metadata["album"]
             )
         else:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 "Calculating ReplayGain for %i clusters...", num_clusters
             )
         for cluster in clusters:
             thread.run_task(
-                partial(calculate_replaygain, cluster.files, self.options),
+                partial(calculate_replaygain, self.api, cluster.files, self.options),
                 partial(self._replaygain_callback, cluster.files),
             )
 
     def _replaygain_callback(self, files, result=None, error=None):
+        window = self.api.tagger.window
         if error is None:
             for file in files:
                 file.update()
-            self.tagger.window.set_statusbar_message(
-                "ReplayGain successfully calculated."
-            )
+            window.set_statusbar_message("ReplayGain successfully calculated.")
         else:
-            self.tagger.window.set_statusbar_message("Could not calculate ReplayGain.")
+            window.set_statusbar_message("Could not calculate ReplayGain.")
 
 
 class ScanTracks(BaseAction):
     NAME = "Calculate Replay&Gain..."
 
     def callback(self, objs):
-        if not rsgain_found(
-            self.api.plugin_config["rsgain_command"], self.tagger.window
-        ):
+        config = self.api.plugin_config
+        window = self.api.tagger.window
+
+        if not rsgain_found(config["rsgain_command"], window):
             return
         tracks = list(filter(lambda o: isinstance(o, Track), objs))
-        self.options = build_options(self.config)
+        self.options = build_options(config)
         num_tracks = len(tracks)
         if num_tracks == 1:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 "Calculating ReplayGain for %s...", {tracks[0].files[0].filename}
             )
         else:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 "Calculating ReplayGain for %i tracks...", num_tracks
             )
         thread.run_task(
-            partial(calculate_replaygain, tracks, self.options),
+            partial(calculate_replaygain, self.api, tracks, self.options),
             partial(self._replaygain_callback, tracks),
         )
 
     def _replaygain_callback(self, tracks, result=None, error=None):
+        window = self.api.tagger.window
         if error is None:
             for track in tracks:
                 for file in track.files:
                     file.update()
                 track.update()
-            self.tagger.window.set_statusbar_message(
-                "ReplayGain successfully calculated."
-            )
+            window.set_statusbar_message("ReplayGain successfully calculated.")
         else:
-            self.tagger.window.set_statusbar_message("Could not calculate ReplayGain.")
+            window.set_statusbar_message("Could not calculate ReplayGain.")
 
 
 class ScanAlbums(BaseAction):
     NAME = "Calculate Replay&Gain..."
 
     def callback(self, objs):
-        if not rsgain_found(
-            self.api.plugin_config["rsgain_command"], self.tagger.window
-        ):
+        config = self.api.plugin_config
+        window = self.api.tagger.window
+
+        if not rsgain_found(config["rsgain_command"], window):
             return
-        self.options = build_options(self.config)
+        self.options = build_options(config)
         albums = list(filter(lambda o: isinstance(o, Album), objs))
 
         self.num_albums = len(albums)
         self.current = 0
         if self.num_albums == 1:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 'Calculating ReplayGain for "%s"...', albums[0].metadata["album"]
             )
         else:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 "Calculating ReplayGain for %i albums...", self.num_albums
             )
         for album in albums:
             thread.run_task(
-                partial(calculate_replaygain, album.tracks, self.options),
+                partial(calculate_replaygain, self.api, album.tracks, self.options),
                 partial(self._albumgain_callback, album),
             )
 
@@ -380,6 +376,7 @@ class ScanAlbums(BaseAction):
             return f" ({self.current}/{self.num_albums})"
 
     def _albumgain_callback(self, album, result=None, error=None):
+        window = self.api.tagger.window
         progress = self._format_progress()
         if error is None:
             for track in album.tracks:
@@ -387,7 +384,7 @@ class ScanAlbums(BaseAction):
                     file.update()
                 track.update()
             album.update()
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 'Successfully calculated ReplayGain for "%(album)s"%(progress)s.',
                 {
                     "album": album.metadata["album"],
@@ -395,7 +392,7 @@ class ScanAlbums(BaseAction):
                 },
             )
         else:
-            self.tagger.window.set_statusbar_message(
+            window.set_statusbar_message(
                 'Failed to calculate ReplayGain for "%(album)s"%(progress)s.',
                 {
                     "album": album.metadata["album"],
