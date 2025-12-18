@@ -31,6 +31,7 @@ from picard.plugin3.api import (
     OptionsPage,
     PluginApi,
     Track,
+    t_,
 )
 from picard.track import NonAlbumTrack
 from picard.util import thread
@@ -267,7 +268,7 @@ def isinstanceany(obj, types):
 
 
 class ScanCluster(BaseAction):
-    TITLE = "Calculate Cluster Replay&Gain as Album..."
+    TITLE = t_("action.cluster", "Calculate Cluster Replay&Gain as Album…")
 
     def callback(self, objs):
         config = self.api.plugin_config
@@ -279,14 +280,16 @@ class ScanCluster(BaseAction):
 
         self.options = build_options(config)
         num_clusters = len(clusters)
-        if num_clusters == 1:
-            window.set_statusbar_message(
-                "Calculating ReplayGain for %s...", clusters[0].metadata["album"]
+        window.set_statusbar_message(
+            self.api.trn(
+                "statusbar.calculating.clusters",
+                "Calculating ReplayGain for {name}…",
+                "Calculating ReplayGain for {count} clusters…",
+                num_clusters,
+                name=clusters[0].metadata["album"],
+                count=num_clusters,
             )
-        else:
-            window.set_statusbar_message(
-                "Calculating ReplayGain for %i clusters...", num_clusters
-            )
+        )
         for cluster in clusters:
             thread.run_task(
                 partial(calculate_replaygain, self.api, cluster.files, self.options),
@@ -298,13 +301,17 @@ class ScanCluster(BaseAction):
         if error is None:
             for file in files:
                 file.update()
-            window.set_statusbar_message("ReplayGain successfully calculated.")
+            window.set_statusbar_message(
+                self.api.tr("statusbar.success", "ReplayGain successfully calculated.")
+            )
         else:
-            window.set_statusbar_message("Could not calculate ReplayGain.")
+            window.set_statusbar_message(
+                self.api.tr("statusbar.failure", "Could not calculate ReplayGain.")
+            )
 
 
 class ScanTracks(BaseAction):
-    TITLE = "Calculate Replay&Gain..."
+    TITLE = t_("action.tracks", "Calculate Replay&Gain…")
 
     def callback(self, objs):
         config = self.api.plugin_config
@@ -315,14 +322,17 @@ class ScanTracks(BaseAction):
         tracks = list(filter(lambda o: isinstance(o, Track), objs))
         self.options = build_options(config)
         num_tracks = len(tracks)
-        if num_tracks == 1:
-            window.set_statusbar_message(
-                "Calculating ReplayGain for %s...", {tracks[0].files[0].filename}
+
+        window.set_statusbar_message(
+            self.api.trn(
+                "statusbar.calculating.tracks",
+                "Calculating ReplayGain for {name}…",
+                "Calculating ReplayGain for {count} tracks…",
+                num_tracks,
+                name=tracks[0].files[0].filename,
+                count=num_tracks,
             )
-        else:
-            window.set_statusbar_message(
-                "Calculating ReplayGain for %i tracks...", num_tracks
-            )
+        )
         thread.run_task(
             partial(calculate_replaygain, self.api, tracks, self.options),
             partial(self._replaygain_callback, tracks),
@@ -335,13 +345,17 @@ class ScanTracks(BaseAction):
                 for file in track.files:
                     file.update()
                 track.update()
-            window.set_statusbar_message("ReplayGain successfully calculated.")
+            window.set_statusbar_message(
+                self.api.tr("statusbar.success", "ReplayGain successfully calculated.")
+            )
         else:
-            window.set_statusbar_message("Could not calculate ReplayGain.")
+            window.set_statusbar_message(
+                self.api.tr("statusbar.failure", "Could not calculate ReplayGain.")
+            )
 
 
 class ScanAlbums(BaseAction):
-    TITLE = "Calculate Replay&Gain..."
+    TITLE = t_("action.albums", "Calculate Replay&Gain…")
 
     def callback(self, objs):
         config = self.api.plugin_config
@@ -354,14 +368,16 @@ class ScanAlbums(BaseAction):
 
         self.num_albums = len(albums)
         self.current = 0
-        if self.num_albums == 1:
-            window.set_statusbar_message(
-                'Calculating ReplayGain for "%s"...', albums[0].metadata["album"]
+        window.set_statusbar_message(
+            self.api.trn(
+                "statusbar.calculating.albums",
+                "Calculating ReplayGain for {name}…",
+                "Calculating ReplayGain for {count} albums…",
+                self.num_albums,
+                name=albums[0].metadata["album"],
+                count=self.num_albums,
             )
-        else:
-            window.set_statusbar_message(
-                "Calculating ReplayGain for %i albums...", self.num_albums
-            )
+        )
         for album in albums:
             thread.run_task(
                 partial(calculate_replaygain, self.api, album.tracks, self.options),
@@ -385,19 +401,21 @@ class ScanAlbums(BaseAction):
                 track.update()
             album.update()
             window.set_statusbar_message(
-                'Successfully calculated ReplayGain for "%(album)s"%(progress)s.',
-                {
-                    "album": album.metadata["album"],
-                    "progress": progress,
-                },
+                self.api.tr(
+                    "statusbar.success.albums",
+                    'Successfully calculated ReplayGain for "{album}"{progress}.',
+                    album=album.metadata["album"],
+                    progress=progress,
+                )
             )
         else:
             window.set_statusbar_message(
-                'Failed to calculate ReplayGain for "%(album)s"%(progress)s.',
-                {
-                    "album": album.metadata["album"],
-                    "progress": progress,
-                },
+                self.api.tr(
+                    "statusbar.failure.albums",
+                    'Failed to calculate ReplayGain for "{album}"{progress}.',
+                    album=album.metadata["album"],
+                    progress=progress,
+                )
             )
 
 

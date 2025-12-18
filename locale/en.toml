@@ -1,0 +1,19 @@
+"action.albums" = "Calculate Replay&Gain\u2026"
+"action.cluster" = "Calculate Cluster Replay&Gain as Album\u2026"
+"action.tracks" = "Calculate Replay&Gain\u2026"
+["statusbar.calculating.albums"]
+one = "Calculating ReplayGain for {name}\u2026"
+other = "Calculating ReplayGain for {count} albums\u2026"
+
+["statusbar.calculating.clusters"]
+one = "Calculating ReplayGain for {name}\u2026"
+other = "Calculating ReplayGain for {count} clusters\u2026"
+
+["statusbar.calculating.tracks"]
+one = "Calculating ReplayGain for {name}\u2026"
+other = "Calculating ReplayGain for {count} tracks\u2026"
+
+"statusbar.failure" = "Could not calculate ReplayGain."
+"statusbar.failure.albums" = "Failed to calculate ReplayGain for \"{album}\"{progress}."
+"statusbar.success" = "ReplayGain successfully calculated."
+"statusbar.success.albums" = "Successfully calculated ReplayGain for \"{album}\"{progress}."
