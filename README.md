@@ -1,20 +1,12 @@
-uuid = "74807b76-c451-419f-bbd4-42a78e2444a6"
-name = "ReplayGain 2.0"
-authors = ["complexlogic", "Philipp Wolfer"]
-maintainers = ["MusicBrainz Picard Team"]
-description = "Calculates ReplayGain information for tracks and albums"
-api = ['3.0']
-license = "GPL-2.0"
-license_url = "https://www.gnu.org/licenses/gpl-2.0.html"
-categories = ["metadata", "ui"]
+# MusicBrainz Picard Replaygain 2.0
 
-long_description = """
-Calculates ReplayGain information for tracks and albums according to the
+MusicBrainz Picard 3 plugin to calculate ReplayGain information for tracks and albums according to the
 [ReplayGain 2.0 specification](https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification).
 This plugin depends on the ReplayGain utility [rsgain](https://github.com/complexlogic/rsgain). Users
 are required to install rsgain and set its path in the plugin settings before use.
 
-#### Usage
+## Usage
+
 Select one or more tracks, albums, or clusters then right click and select Plugin->Calculate ReplayGain.
 The plugin will calculate ReplayGain information for the selected items and display the results in the
 metadata window. Click the save button to write the tags to file.
@@ -33,7 +25,6 @@ The following file formats are supported:
 - WAV (.wav)
 - AIFF (.aiff)
 - TAK (.tak)
-- MusePack *(Stream Version 8 only)* (.mpc)
+- MusePack _(Stream Version 8 only)_ (.mpc)
 
 This plugin is based on the original ReplayGain plugin by Philipp Wolfer and Sophist.
-"""
