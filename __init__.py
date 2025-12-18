@@ -267,7 +267,7 @@ def isinstanceany(obj, types):
 
 
 class ScanCluster(BaseAction):
-    NAME = "Calculate Cluster Replay&Gain as Album..."
+    TITLE = "Calculate Cluster Replay&Gain as Album..."
 
     def callback(self, objs):
         config = self.api.plugin_config
@@ -304,7 +304,7 @@ class ScanCluster(BaseAction):
 
 
 class ScanTracks(BaseAction):
-    NAME = "Calculate Replay&Gain..."
+    TITLE = "Calculate Replay&Gain..."
 
     def callback(self, objs):
         config = self.api.plugin_config
@@ -341,7 +341,7 @@ class ScanTracks(BaseAction):
 
 
 class ScanAlbums(BaseAction):
-    NAME = "Calculate Replay&Gain..."
+    TITLE = "Calculate Replay&Gain..."
 
     def callback(self, objs):
         config = self.api.plugin_config
@@ -402,10 +402,6 @@ class ScanAlbums(BaseAction):
 
 
 class ReplayGain2OptionsPage(OptionsPage):
-    NAME = "replaygain2"
-    TITLE = "ReplayGain 2.0"
-    PARENT = "plugins"
-
     def __init__(self, parent=None):
         super(ReplayGain2OptionsPage, self).__init__(parent)
         self.ui = Ui_ReplayGain2OptionsPage()
