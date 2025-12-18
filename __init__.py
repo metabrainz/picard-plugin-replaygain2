@@ -37,7 +37,7 @@ from picard.track import NonAlbumTrack
 from picard.util import thread
 from PyQt6.QtWidgets import QFileDialog
 
-from .ui_options_replaygain2 import Ui_ReplayGain2OptionsPage
+from .ui_options import Ui_ReplayGain2OptionsPage
 
 CLIP_MODE_DISABLED = 0
 CLIP_MODE_POSITIVE = 1
@@ -95,8 +95,12 @@ class OpusMode(IntEnum):
 # Make sure the rsgain executable exists
 def rsgain_found(rsgain_command, window):
     if not os.path.exists(rsgain_command) and shutil.which(rsgain_command) is None:
+        api = PluginApi.get_api()
         window.set_statusbar_message(
-            "Failed to locate rsgain. Enter the path in the plugin settings."
+            api.tr(
+                "statusbar.rsgain_not_found",
+                "Failed to locate rsgain. Enter the path in the plugin settings.",
+            )
         )
         return False
     return True
@@ -425,13 +429,20 @@ class ReplayGain2OptionsPage(OptionsPage):
         self.ui = Ui_ReplayGain2OptionsPage()
         self.ui.setupUi(self)
         self.ui.clip_mode.addItems(
-            ["Disabled", "Enabled for positive gain values only", "Always enabled"]
+            [
+                self.api.tr("option.clip_mode.disabled", "Disabled"),
+                self.api.tr(
+                    "option.clip_mode.enabled_positive_gain",
+                    "Enabled for positive gain values only",
+                ),
+                self.api.tr("option.clip_mode.enabled_always", "Always enabled"),
+            ]
         )
         self.ui.opus_mode.addItems(
             [
-                "Write standard ReplayGain tags",
-                "Write R128_*_GAIN tags",
-                "Write both standard and R128 tags",
+                self.api.tr("option.opus.standard", "Write standard ReplayGain tags"),
+                self.api.tr("option.opus.r128", "Write R128_*_GAIN tags"),
+                self.api.tr("option.opus.both", "Write both standard and R128 tags"),
             ]
         )
         self.ui.rsgain_command_browse.clicked.connect(self.rsgain_command_browse)
