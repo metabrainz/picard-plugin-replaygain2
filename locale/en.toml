@@ -20,6 +20,12 @@
 "qt.ReplayGain2OptionsPage.title" = "ReplayGain 2.0 Settings"
 "qt.ReplayGain2OptionsPage.true_peak.help" = "Use more accurate true peak calculations (trade for performance)"
 "qt.ReplayGain2OptionsPage.true_peak.label" = "Use true peak"
+"statusbar.failure" = "Could not calculate ReplayGain."
+"statusbar.failure.albums" = "Failed to calculate ReplayGain for \"{album}\"{progress}."
+"statusbar.rsgain_not_found" = "Failed to locate rsgain. Enter the path in the plugin settings."
+"statusbar.success" = "ReplayGain successfully calculated."
+"statusbar.success.albums" = "Successfully calculated ReplayGain for \"{album}\"{progress}."
+
 ["statusbar.calculating.albums"]
 one = "Calculating ReplayGain for {name}\u2026"
 other = "Calculating ReplayGain for {count} albums\u2026"
@@ -31,9 +37,3 @@ other = "Calculating ReplayGain for {count} clusters\u2026"
 ["statusbar.calculating.tracks"]
 one = "Calculating ReplayGain for {name}\u2026"
 other = "Calculating ReplayGain for {count} tracks\u2026"
-
-"statusbar.failure" = "Could not calculate ReplayGain."
-"statusbar.failure.albums" = "Failed to calculate ReplayGain for \"{album}\"{progress}."
-"statusbar.rsgain_not_found" = "Failed to locate rsgain. Enter the path in the plugin settings."
-"statusbar.success" = "ReplayGain successfully calculated."
-"statusbar.success.albums" = "Successfully calculated ReplayGain for \"{album}\"{progress}."

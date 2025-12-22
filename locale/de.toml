@@ -20,6 +20,11 @@
 "qt.ReplayGain2OptionsPage.title" = "ReplayGain-2.0-Einstellungen"
 "qt.ReplayGain2OptionsPage.true_peak.help" = "Genauere True-Peak-Berechnung verwenden (auf Kosten der Geschwindigkeit)"
 "qt.ReplayGain2OptionsPage.true_peak.label" = "True Peak verwenden"
+"statusbar.failure" = "ReplayGaing konnte nicht berechnet werden."
+"statusbar.failure.albums" = "ReplayGaing-Berechnung für „{album}“ fehlgeschlagen{progress}."
+"statusbar.rsgain_not_found" = "Konnte rsgain nicht finden. Pfad in den Plugin-Einstellungen eingeben."
+"statusbar.success" = "ReplayGain erfolgreich berechnet."
+"statusbar.success.albums" = "ReplayGaing erfolgreich für „{album}“ berechnet{progress}."
 
 ["statusbar.calculating.albums"]
 one = "Berechne ReplayGain für {name}…"
@@ -32,8 +37,3 @@ other = "Berechne ReplayGain für {count} Gruppierungen…"
 ["statusbar.calculating.tracks"]
 one = "Berechne ReplayGain für {name}…"
 other = "Berechne ReplayGain für {count} Titel…"
-"statusbar.failure" = "ReplayGaing konnte nicht berechnet werden."
-"statusbar.failure.albums" = "ReplayGaing-Berechnung für „{album}“ fehlgeschlagen{progress}."
-"statusbar.rsgain_not_found" = "Konnte rsgain nicht finden. Pfad in den Plugin-Einstellungen eingeben."
-"statusbar.success" = "ReplayGain erfolgreich berechnet."
-"statusbar.success.albums" = "ReplayGaing erfolgreich für „{album}“ berechnet{progress}."
