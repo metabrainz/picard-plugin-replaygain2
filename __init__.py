@@ -445,12 +445,17 @@ class ReplayGain2OptionsPage(OptionsPage):
             self.api.tr("option.clip_mode.enabled_always", "Always enabled"),
             ClipMode.ALWAYS,
         )
-        self.ui.opus_mode.addItems(
-            [
-                self.api.tr("option.opus.standard", "Write standard ReplayGain tags"),
-                self.api.tr("option.opus.r128", "Write R128_*_GAIN tags"),
-                self.api.tr("option.opus.both", "Write both standard and R128 tags"),
-            ]
+        self.ui.opus_mode.addItem(
+            self.api.tr("option.opus.standard", "Write standard ReplayGain tags"),
+            OpusMode.STANDARD,
+        )
+        self.ui.opus_mode.addItem(
+            self.api.tr("option.opus.r128", "Write R128_*_GAIN tags"),
+            OpusMode.R128,
+        )
+        self.ui.opus_mode.addItem(
+            self.api.tr("option.opus.both", "Write both standard and R128 tags"),
+            OpusMode.BOTH,
         )
         self.ui.rsgain_command_browse.clicked.connect(self.rsgain_command_browse)
 
@@ -477,7 +482,7 @@ class ReplayGain2OptionsPage(OptionsPage):
         self.api.plugin_config["target_loudness"] = self.ui.target_loudness.value()
         self.api.plugin_config["clip_mode"] = self.ui.clip_mode.currentData()
         self.api.plugin_config["max_peak"] = self.ui.max_peak.value()
-        self.api.plugin_config["opus_mode"] = self.ui.opus_mode.currentIndex()
+        self.api.plugin_config["opus_mode"] = self.ui.opus_mode.currentData()
         self.api.plugin_config["opus_m23"] = self.ui.opus_m23.isChecked()
 
     def rsgain_command_browse(self):
