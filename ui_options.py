@@ -151,5 +151,5 @@ class Ui_ReplayGain2OptionsPage(object):
         self.label_5.setText(_translate("ReplayGain2OptionsPage", "target_loudness.label"))
         self.label_2.setText(_translate("ReplayGain2OptionsPage", "clip_mode.label"))
         self.label_3.setText(_translate("ReplayGain2OptionsPage", "max_peak.label"))
-        self.label_4.setText(_translate("ReplayGain2OptionsPage", "Opus Files"))
+        self.label_4.setText(_translate("ReplayGain2OptionsPage", "opus_mode.label"))
         self.opus_m23.setText(_translate("ReplayGain2OptionsPage", "opus_m23.label"))

@@ -221,7 +221,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Opus Files</string>
+         <string>opus_mode.label</string>
         </property>
        </widget>
       </item>
