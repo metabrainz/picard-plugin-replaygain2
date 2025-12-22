@@ -429,7 +429,7 @@ class ScanAlbums(BaseAction):
 
 class ReplayGain2OptionsPage(OptionsPage):
     def __init__(self, parent=None):
-        super(ReplayGain2OptionsPage, self).__init__(parent)
+        super().__init__(parent)
         self.ui = Ui_ReplayGain2OptionsPage()
         self.ui.setupUi(self)
 
