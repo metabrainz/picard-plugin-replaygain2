@@ -3,6 +3,7 @@
 import os
 import shutil
 import subprocess  # nosec: B404
+from collections import OrderedDict
 from enum import Enum, IntEnum
 from functools import partial
 
@@ -430,33 +431,54 @@ class ReplayGain2OptionsPage(OptionsPage):
         super(ReplayGain2OptionsPage, self).__init__(parent)
         self.ui = Ui_ReplayGain2OptionsPage()
         self.ui.setupUi(self)
-        self.ui.clip_mode.addItem(
-            self.api.tr("option.clip_mode.disabled", "Disabled"),
-            ClipMode.DISABLED,
+
+        # clip modes
+        self._clip_modes = OrderedDict(
+            [
+                (
+                    ClipMode.DISABLED,
+                    self.api.tr("option.clip_mode.disabled", "Disabled"),
+                ),
+                (
+                    ClipMode.POSITIVE,
+                    self.api.tr(
+                        "option.clip_mode.enabled_positive_gain",
+                        "Enabled for positive gain values only",
+                    ),
+                ),
+                (
+                    ClipMode.ALWAYS,
+                    self.api.tr("option.clip_mode.enabled_always", "Always enabled"),
+                ),
+            ]
         )
-        self.ui.clip_mode.addItem(
-            self.api.tr(
-                "option.clip_mode.enabled_positive_gain",
-                "Enabled for positive gain values only",
-            ),
-            ClipMode.POSITIVE,
+        for mode, label in self._clip_modes.items():
+            self.ui.clip_mode.addItem(label, mode)
+
+        # opus modes
+        self._opus_modes = OrderedDict(
+            [
+                (
+                    OpusMode.STANDARD,
+                    self.api.tr(
+                        "option.opus.standard", "Write standard ReplayGain tags"
+                    ),
+                ),
+                (
+                    OpusMode.R128,
+                    self.api.tr("option.opus.r128", "Write R128_*_GAIN tags"),
+                ),
+                (
+                    OpusMode.BOTH,
+                    self.api.tr(
+                        "option.opus.both", "Write both standard and R128 tags"
+                    ),
+                ),
+            ]
         )
-        self.ui.clip_mode.addItem(
-            self.api.tr("option.clip_mode.enabled_always", "Always enabled"),
-            ClipMode.ALWAYS,
-        )
-        self.ui.opus_mode.addItem(
-            self.api.tr("option.opus.standard", "Write standard ReplayGain tags"),
-            OpusMode.STANDARD,
-        )
-        self.ui.opus_mode.addItem(
-            self.api.tr("option.opus.r128", "Write R128_*_GAIN tags"),
-            OpusMode.R128,
-        )
-        self.ui.opus_mode.addItem(
-            self.api.tr("option.opus.both", "Write both standard and R128 tags"),
-            OpusMode.BOTH,
-        )
+        for mode, label in self._opus_modes.items():
+            self.ui.opus_mode.addItem(label, mode)
+
         self.ui.rsgain_command_browse.clicked.connect(self.rsgain_command_browse)
 
     def load(self):
@@ -467,9 +489,13 @@ class ReplayGain2OptionsPage(OptionsPage):
             self.api.plugin_config["reference_loudness"]
         )
         self.ui.target_loudness.setValue(self.api.plugin_config["target_loudness"])
-        self.ui.clip_mode.setCurrentIndex(self.api.plugin_config["clip_mode"])
+        self.ui.clip_mode.setCurrentText(
+            self._clip_modes[self.api.plugin_config["clip_mode"]]
+        )
         self.ui.max_peak.setValue(self.api.plugin_config["max_peak"])
-        self.ui.opus_mode.setCurrentIndex(self.api.plugin_config["opus_mode"])
+        self.ui.opus_mode.setCurrentText(
+            self._opus_modes[self.api.plugin_config["opus_mode"]]
+        )
         self.ui.opus_m23.setChecked(self.api.plugin_config["opus_m23"])
 
     def save(self):
