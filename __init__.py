@@ -3,7 +3,7 @@
 import os
 import shutil
 import subprocess  # nosec: B404
-from enum import IntEnum
+from enum import Enum, IntEnum
 from functools import partial
 
 from picard.formats import (
@@ -38,12 +38,6 @@ from picard.util import thread
 from PyQt6.QtWidgets import QFileDialog
 
 from .ui_options import Ui_ReplayGain2OptionsPage
-
-CLIP_MODE_DISABLED = 0
-CLIP_MODE_POSITIVE = 1
-CLIP_MODE_ALWAYS = 2
-
-CLIP_MODE_MAP = ("n", "p", "a")
 
 SUPPORTED_FORMATS = (
     AiffFile,
@@ -86,6 +80,12 @@ TAGS = (
 )
 
 
+class ClipMode(Enum):
+    DISABLED = "n"
+    POSITIVE = "p"
+    ALWAYS = "a"
+
+
 class OpusMode(IntEnum):
     STANDARD = 0
     R128 = 1
@@ -118,7 +118,7 @@ def build_options(config):
     if config["true_peak"]:
         options.append("-t")
     options += ["-l", str(config["target_loudness"])]
-    options += ["-c", CLIP_MODE_MAP[config["clip_mode"]]]
+    options += ["-c", str(config["clip_mode"].value)]
     options += ["-m", str(config["max_peak"])]
     return options
 
@@ -187,9 +187,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
             raise ReplayGain2Error(f"Object {obj} is not a Track or File")
 
         if not isinstanceany(file, SUPPORTED_FORMATS):
-            raise ReplayGain2Error(
-                f"File '{file.filename}' is of unsupported format"
-            )
+            raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
         files.append(file.filename)
         valid_list.append(obj)
 
@@ -432,15 +430,20 @@ class ReplayGain2OptionsPage(OptionsPage):
         super(ReplayGain2OptionsPage, self).__init__(parent)
         self.ui = Ui_ReplayGain2OptionsPage()
         self.ui.setupUi(self)
-        self.ui.clip_mode.addItems(
-            [
-                self.api.tr("option.clip_mode.disabled", "Disabled"),
-                self.api.tr(
-                    "option.clip_mode.enabled_positive_gain",
-                    "Enabled for positive gain values only",
-                ),
-                self.api.tr("option.clip_mode.enabled_always", "Always enabled"),
-            ]
+        self.ui.clip_mode.addItem(
+            self.api.tr("option.clip_mode.disabled", "Disabled"),
+            ClipMode.DISABLED,
+        )
+        self.ui.clip_mode.addItem(
+            self.api.tr(
+                "option.clip_mode.enabled_positive_gain",
+                "Enabled for positive gain values only",
+            ),
+            ClipMode.POSITIVE,
+        )
+        self.ui.clip_mode.addItem(
+            self.api.tr("option.clip_mode.enabled_always", "Always enabled"),
+            ClipMode.ALWAYS,
         )
         self.ui.opus_mode.addItems(
             [
@@ -472,7 +475,7 @@ class ReplayGain2OptionsPage(OptionsPage):
             self.ui.reference_loudness.isChecked()
         )
         self.api.plugin_config["target_loudness"] = self.ui.target_loudness.value()
-        self.api.plugin_config["clip_mode"] = self.ui.clip_mode.currentIndex()
+        self.api.plugin_config["clip_mode"] = self.ui.clip_mode.currentData()
         self.api.plugin_config["max_peak"] = self.ui.max_peak.value()
         self.api.plugin_config["opus_mode"] = self.ui.opus_mode.currentIndex()
         self.api.plugin_config["opus_m23"] = self.ui.opus_m23.isChecked()
@@ -493,7 +496,7 @@ def enable(api: PluginApi):
     api.plugin_config.register_option("true_peak", False)
     api.plugin_config.register_option("reference_loudness", False)
     api.plugin_config.register_option("target_loudness", -18)
-    api.plugin_config.register_option("clip_mode", CLIP_MODE_POSITIVE)
+    api.plugin_config.register_option("clip_mode", ClipMode.POSITIVE)
     api.plugin_config.register_option("max_peak", 0)
     api.plugin_config.register_option("opus_mode", OpusMode.STANDARD)
     api.plugin_config.register_option("opus_m23", False)
