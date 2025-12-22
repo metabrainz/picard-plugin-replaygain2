@@ -150,13 +150,13 @@ def update_metadata(config, metadata, track_result, album_result, is_nat, opus_m
         metadata.delete(tag)
 
     # Opus R128 tags
-    if opus_mode in (OpusMode.R128, OpusMode.BOTH):
+    if opus_mode in {OpusMode.R128, OpusMode.BOTH}:
         metadata.set("r128_track_gain", format_r128(track_result, config))
         if album_result is not None:
             metadata.set("r128_album_gain", format_r128(album_result, config))
 
     # Standard ReplayGain tags
-    if opus_mode in (OpusMode.STANDARD, OpusMode.BOTH):
+    if opus_mode in {OpusMode.STANDARD, OpusMode.BOTH}:
         metadata.set("replaygain_track_gain", track_result["gain"] + " dB")
         metadata.set("replaygain_track_peak", track_result["peak"])
         if config["album_tags"]:
