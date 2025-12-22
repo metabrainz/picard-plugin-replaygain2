@@ -92,6 +92,10 @@ class OpusMode(IntEnum):
     BOTH = 2
 
 
+class ReplayGain2Error(Exception):
+    pass
+
+
 # Make sure the rsgain executable exists
 def rsgain_found(rsgain_command, window):
     if not os.path.exists(rsgain_command) and shutil.which(rsgain_command) is None:
@@ -180,11 +184,11 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         elif isinstance(obj, File):
             file = obj
         else:
-            raise Exception(f"ReplayGain 2.0: Object {obj} is not a Track or File")
+            raise ReplayGain2Error(f"Object {obj} is not a Track or File")
 
         if not isinstanceany(file, SUPPORTED_FORMATS):
-            raise Exception(
-                f"ReplayGain 2.0: File '{file.filename}' is of unsupported format"
+            raise ReplayGain2Error(
+                f"File '{file.filename}' is of unsupported format"
             )
         files.append(file.filename)
         valid_list.append(obj)
@@ -213,7 +217,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         (output, _unused) = process.communicate()
         rc = process.poll()
         if rc:
-            raise Exception(f"ReplayGain 2.0: rsgain returned non-zero code ({rc})")
+            raise ReplayGain2Error(f"rsgain returned non-zero code ({rc})")
         api.logger.debug(output)
         lines = output.splitlines()
     album_tags = api.plugin_config["album_tags"]
@@ -227,7 +231,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         if album_tags
         else 0
     ):  # Album result
-        raise Exception(f"ReplayGain 2.0: Unexpected output from rsgain: {lines}")
+        raise ReplayGain2Error(f"Unexpected output from rsgain: {lines}")
     lines.pop(0)  # Don't care about the table header
 
     # Parse album result
@@ -241,7 +245,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     for line in lines:
         result = parse_result(line)
         if result is None:
-            raise Exception("ReplayGain 2.0: Failed to parse result")
+            raise ReplayGain2Error("Failed to parse result")
         results.append(result)
 
     # Update track metadata with results
