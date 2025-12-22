@@ -205,6 +205,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
 
     # Execute the scan with rsgain
     lines = list()
+    api.logger.debug(f"Running rsgain with options: {' '.join(options)}")
     with subprocess.Popen(  # nosec: B603
         call,
         stdout=subprocess.PIPE,
