@@ -11,6 +11,7 @@
 "option.opus.r128" = "Write R128_*_GAIN tags"
 "option.opus.standard" = "Write standard ReplayGain tags"
 "qt.ReplayGain2OptionsPage.album_tags.label" = "Calculate album gain/peak"
+"qt.ReplayGain2OptionsPage.album_aes77.label" = "Use the loudest track as the album loudness (recommended by AES77)"
 "qt.ReplayGain2OptionsPage.clip_mode.label" = "Clipping Protection"
 "qt.ReplayGain2OptionsPage.max_peak.label" = "Max Peak (dB)"
 "qt.ReplayGain2OptionsPage.opus_m23.label" = "Always reference Opus R128_*_GAIN tags to -23 LUFS"
