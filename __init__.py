@@ -116,6 +116,8 @@ def build_options(config):
     options = ["custom", "-O", "-s", "s"]
     if config["album_tags"]:
         options.append("-a")
+    if config["album_aes77"]:
+        options.append("-e")
     if config["true_peak"]:
         options.append("-t")
     options += ["-l", str(config["target_loudness"])]
@@ -485,6 +487,7 @@ class ReplayGain2OptionsPage(OptionsPage):
     def load(self):
         self.ui.rsgain_command.setText(self.api.plugin_config["rsgain_command"])
         self.ui.album_tags.setChecked(self.api.plugin_config["album_tags"])
+        self.ui.album_aes77.setChecked(self.api.plugin_config["album_aes77"])
         self.ui.true_peak.setChecked(self.api.plugin_config["true_peak"])
         self.ui.reference_loudness.setChecked(
             self.api.plugin_config["reference_loudness"]
@@ -502,6 +505,7 @@ class ReplayGain2OptionsPage(OptionsPage):
     def save(self):
         self.api.plugin_config["rsgain_command"] = self.ui.rsgain_command.text()
         self.api.plugin_config["album_tags"] = self.ui.album_tags.isChecked()
+        self.api.plugin_config["album_aes77"] = self.ui.album_aes77.isChecked()
         self.api.plugin_config["true_peak"] = self.ui.true_peak.isChecked()
         self.api.plugin_config["reference_loudness"] = (
             self.ui.reference_loudness.isChecked()
@@ -525,6 +529,7 @@ def enable(api: PluginApi):
     """Called when plugin is enabled."""
     api.plugin_config.register_option("rsgain_command", "rsgain")
     api.plugin_config.register_option("album_tags", True)
+    api.plugin_config.register_option("album_aes77", False)
     api.plugin_config.register_option("true_peak", False)
     api.plugin_config.register_option("reference_loudness", False)
     api.plugin_config.register_option("target_loudness", -18)
