@@ -37,3 +37,4 @@ The following file formats are supported:
 
 This plugin is based on the original ReplayGain plugin by Philipp Wolfer and Sophist.
 """
+report_bugs_to = "https://tickets.metabrainz.org/issues/?filter=13410"
