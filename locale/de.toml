@@ -26,6 +26,8 @@
 "statusbar.rsgain_not_found" = "Konnte rsgain nicht finden. Pfad in den Plugin-Einstellungen eingeben."
 "statusbar.success" = "ReplayGain erfolgreich berechnet."
 "statusbar.success.albums" = "ReplayGaing erfolgreich für „{album}“ berechnet{progress}."
+"manifest.description" = "Berechnet ReplayGain-Informationen für Titel und Alben"
+"manifest.name" = "ReplayGain 2.0"
 
 ["statusbar.calculating.albums"]
 one = "Berechne ReplayGain für {name}…"
