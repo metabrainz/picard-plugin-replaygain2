@@ -54,7 +54,6 @@ class Ui_ReplayGain2OptionsPage(object):
         self.album_tags.setObjectName("album_tags")
         self.vboxlayout1.addWidget(self.album_tags)
         self.album_aes77 = QtWidgets.QCheckBox(parent=self.replay_gain)
-        self.album_aes77.setChecked(False)
         self.album_aes77.setObjectName("album_aes77")
         self.vboxlayout1.addWidget(self.album_aes77)
         self.true_peak = QtWidgets.QCheckBox(parent=self.replay_gain)
