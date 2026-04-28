@@ -39,3 +39,38 @@ This plugin is based on the original ReplayGain plugin by Philipp Wolfer and Sop
 """
 homepage = "https://github.com/metabrainz/picard-plugin-replaygain2"
 report_bugs_to = "https://tickets.metabrainz.org/issues/?filter=13410"
+
+[description_i18n]
+de = "Berechnet ReplayGain-Informationen für Titel und Alben"
+nl = "Berekent ReplayGain-informatie over nummers en uitgaven"
+
+[long_description_i18n]
+de = """
+Berechnet ReplayGain-Informationen für Titel und Alben gemäß der
+[ReplayGain-2.0-Spezifikation](https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification).
+Dieses Plugin hängt vom ReplayGain-Tool [rsgain](https://github.com/complexlogic/rsgain) ab. Benutzer
+müssen rsgain installieren und den Pfad dazu in den Plugin-Einstellungen festlegen, bevor sie es verwenden können.
+
+#### Verwendung
+Wählen Sie einen oder mehrere Titel, Alben oder Cluster aus, klicken Sie dann mit der rechten Maustaste und wählen Sie Plugin -> ReplayGain berechnen.
+Das Plugin berechnet die ReplayGain-Informationen für die ausgewählten Elemente und zeigt die Ergebnisse
+im Metadatenfenster an. Klicken Sie auf „Speichern“, um die Tags in die Datei zu schreiben.
+
+Die folgenden Dateiformate werden unterstützt:
+
+- MP3 (.mp3)
+- FLAC (.flac)
+- Ogg (.ogg, .oga, .spx)
+- Opus (.opus)
+- MPEG-4 Audio (.m4a, .mp4)
+- WavPack (.wv)
+- Monkey’s Audio (.ape)
+- WMA (.wma)
+- MP2 (.mp2)
+- WAV (.wav)
+- AIFF (.aiff)
+- TAK (.tak)
+- Musepack *(nur Stream-Version 8)* (.mpc)
+
+Dieses Plugin basiert auf dem ursprünglichen ReplayGain-Plugin von Philipp Wolfer und Sophist.
+"""
