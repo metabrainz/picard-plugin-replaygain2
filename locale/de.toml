@@ -28,6 +28,7 @@
 "statusbar.success.albums" = "ReplayGaing erfolgreich für „{album}“ berechnet{progress}."
 "manifest.description" = "Berechnet ReplayGain-Informationen für Titel und Alben"
 "manifest.name" = "ReplayGain 2.0"
+"manifest.long_description" = "Berechnet ReplayGain-Informationen für Titel und Alben gemäß der\n[ReplayGain-2.0-Spezifikation](https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification).\nDieses Plugin hängt vom ReplayGain-Tool [rsgain](https://github.com/complexlogic/rsgain) ab. Benutzer\nmüssen rsgain installieren und den Pfad dazu in den Plugin-Einstellungen festlegen, bevor sie es verwenden können.\n\n#### Verwendung\nWählen Sie einen oder mehrere Titel, Alben oder Cluster aus, klicken Sie dann mit der rechten Maustaste und wählen Sie Plugin -> ReplayGain berechnen.\nDas Plugin berechnet die ReplayGain-Informationen für die ausgewählten Elemente und zeigt die Ergebnisse\nim Metadatenfenster an. Klicken Sie auf „Speichern“, um die Tags in die Datei zu schreiben.\n\nDie folgenden Dateiformate werden unterstützt:\n\n- MP3 (.mp3)\n- FLAC (.flac)\n- Ogg (.ogg, .oga, .spx)\n- Opus (.opus)\n- MPEG-4 Audio (.m4a, .mp4)\n- WavPack (.wv)\n- Monkey’s Audio (.ape)\n- WMA (.wma)\n- MP2 (.mp2)\n- WAV (.wav)\n- AIFF (.aiff)\n- TAK (.tak)\n- Musepack *(nur Stream-Version 8)* (.mpc)\n\nDieses Plugin basiert auf dem ursprünglichen ReplayGain-Plugin von Philipp Wolfer und Sophist.\n"
 
 ["statusbar.calculating.albums"]
 one = "Berechne ReplayGain für {name}…"
