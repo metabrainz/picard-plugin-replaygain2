@@ -267,7 +267,9 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         results.append(result)
 
     # Update track metadata with results
-    api.logger.debug(f"about to update metadata with results {valid_list}")
+    api.logger.debug(
+        f"about to update metadata with results {valid_list} with files {[valid_obj.files for valid_obj in valid_list]}"
+    )
     for i, item in enumerate(valid_list):
         if isinstance(item, Track):
             api.logger.debug(f"wow, its a track {item}")
