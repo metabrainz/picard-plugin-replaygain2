@@ -199,6 +199,8 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
             raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
         files.append(file.filename)
         valid_list.append(obj)
+    api.logger.debug(f"files length: {len(files)}")
+    api.logger.debug(f"valid list length: {len(valid_list)}")
 
     call = [api.plugin_config["rsgain_command"]] + options + files
     for item in call:
@@ -233,6 +235,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     album_tags = api.plugin_config["album_tags"]
 
     # Make sure the number of rows in the output is what we expected
+    api.logger.debug(f"about to check rows")
     if (
         len(lines)
         != 1  # Table header
@@ -245,12 +248,14 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     lines.pop(0)  # Don't care about the table header
 
     # Parse album result
+    api.logger.debug(f"about to parse album result")
     album_result = None
     if album_tags:
         album_result = parse_result(lines[-1])
         lines.pop(-1)
 
     # Parse track results
+    api.logger.debug(f"about to parse track results")
     results = list()
     for line in lines:
         result = parse_result(line)
@@ -259,6 +264,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         results.append(result)
 
     # Update track metadata with results
+    api.logger.debug(f"about to update metadata with results")
     for i, item in enumerate(valid_list):
         if isinstance(item, Track):
             filelist = item.files
