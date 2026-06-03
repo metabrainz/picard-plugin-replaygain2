@@ -26,6 +26,7 @@ from picard.formats import (
     WAVFile,
     WavPackFile,
 )
+from picard.metadata import Metadata
 from picard.plugin3.api import (
     Album,
     BaseAction,
@@ -533,6 +534,19 @@ def script_function_replaygain_album(logger: Logger, parser: ScriptParser):
     return
 
 
+def replaygain_album_on_stage(
+    api: PluginApi, album: Album, metadata: Metadata, options
+):
+    api.logger.info(f"I found the album {metadata.keys()}")
+    api.logger.info(f"what is this {options}")
+    thread.run_task(
+        partial(
+            calculate_replaygain, api, album.tracks, build_options(api.plugin_config)
+        )
+    )
+    return
+
+
 def enable(api: PluginApi):
     """Called when plugin is enabled."""
     api.logger.info("Hi bram")
@@ -550,11 +564,7 @@ def enable(api: PluginApi):
     api.register_album_action(ScanAlbums)
     api.register_cluster_action(ScanCluster)
     api.register_options_page(ReplayGain2OptionsPage)
-    api.register_album_metadata_processor(
-        lambda a, b, c, d: api.logger.info(
-            f"I foudn the album {b.metadata.get('title')}"
-        )
-    )
+    api.register_album_metadata_processor(replaygain_album_on_stage)
     api.register_script_function(
         lambda parser: script_function_replaygain_album(api.logger, parser),
         name="replaygain_album",
