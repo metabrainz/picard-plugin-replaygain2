@@ -8,6 +8,7 @@ import subprocess  # nosec: B404
 from collections import OrderedDict
 from enum import Enum, IntEnum
 from functools import partial
+from typing import Any
 
 from picard.formats import (
     AiffFile,
@@ -181,7 +182,7 @@ def update_metadata(config, metadata, track_result, album_result, is_nat, opus_m
 
 def calculate_replaygain(api: PluginApi, input_objs, options):
     # Make sure files are of supported type, build file list
-    files = list()
+    files = list[File]()
     valid_list = list()
     for obj in input_objs:
         api.logger.debug(f"LOOKING FOR OBJECTS 1: {obj}")
@@ -197,12 +198,13 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
 
         if not isinstanceany(file, SUPPORTED_FORMATS):
             raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
-        files.append(file.filename)
+        files.append(file)
         valid_list.append(obj)
     api.logger.debug(f"files length: {len(files)}")
     api.logger.debug(f"valid list length: {len(valid_list)}")
 
-    call = [api.plugin_config["rsgain_command"]] + options + files
+    filenames = [file.filename for file in files]
+    call: Any = [api.plugin_config["rsgain_command"]] + options + filenames
     for item in call:
         item.encode("utf-8")
 
