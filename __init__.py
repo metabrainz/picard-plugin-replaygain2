@@ -525,8 +525,13 @@ class ReplayGain2OptionsPage(OptionsPage):
             self.ui.rsgain_command.setText(path)
 
 
+def script_function_replaygain_album(parser):
+    return
+
+
 def enable(api: PluginApi):
     """Called when plugin is enabled."""
+    api.logger.info("Hi bram")
     api.plugin_config.register_option("rsgain_command", "rsgain")
     api.plugin_config.register_option("album_tags", True)
     api.plugin_config.register_option("album_aes77", False)
@@ -541,3 +546,6 @@ def enable(api: PluginApi):
     api.register_album_action(ScanAlbums)
     api.register_cluster_action(ScanCluster)
     api.register_options_page(ReplayGain2OptionsPage)
+    api.register_script_function(
+        script_function_replaygain_album, name="replaygain_album"
+    )

@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 __pycache__/
+*.zip
 
 # Environments and development tools
 .venv/
