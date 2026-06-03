@@ -567,13 +567,23 @@ def replaygain_album_on_stage(
 ):
     api.logger.info(f"I found the album {metadata.keys()}")
     api.logger.info(f"what is this {options}")
+    window = api.tagger.window
+    window.set_statusbar_message(
+        api.trn(
+            "statusbar.calculating.albums",
+            "Calculating ReplayGain for {name}…",
+            "Calculating ReplayGain for {count} albums…",
+            1,
+            name=album.metadata["album"],
+            count=1,
+        )
+    )
     thread.run_task(
         partial(
             calculate_replaygain, api, album.tracks, build_options(api.plugin_config)
         ),
         partial(albumgain_callback, api, album),
     )
-    return
 
 
 def enable(api: PluginApi):
