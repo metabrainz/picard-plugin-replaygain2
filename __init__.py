@@ -368,6 +368,31 @@ class ScanTracks(BaseAction):
             )
 
 
+def albumgain_callback(api: PluginApi, album: Album, result=None, error=None):
+    window = api.tagger.window
+    if error is None:
+        for track in album.tracks:
+            for file in track.files:
+                file.update()
+            track.update()
+        album.update()
+        window.set_statusbar_message(
+            api.tr(
+                "statusbar.success.albums",
+                'Successfully calculated ReplayGain for "{album}".',
+                album=album.metadata["album"],
+            )
+        )
+    else:
+        window.set_statusbar_message(
+            api.tr(
+                "statusbar.failure.albums",
+                'Failed to calculate ReplayGain for "{album}"',
+                album=album.metadata["album"],
+            )
+        )
+
+
 class ScanAlbums(BaseAction):
     TITLE = t_("action.albums", "Calculate Replay&Gain…")
 
@@ -542,7 +567,8 @@ def replaygain_album_on_stage(
     thread.run_task(
         partial(
             calculate_replaygain, api, album.tracks, build_options(api.plugin_config)
-        )
+        ),
+        partial(albumgain_callback, api, album),
     )
     return
 
