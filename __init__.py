@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 from logging import Logger
 import os
 import shutil
@@ -527,7 +528,7 @@ class ReplayGain2OptionsPage(OptionsPage):
 
 
 def script_function_replaygain_album(logger: Logger, parser):
-    logger.info(f"the parser is {parser}")
+    logger.info(f"the parser is {json.dumps(parser)}")
     return
 
 
