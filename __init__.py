@@ -36,6 +36,7 @@ from picard.plugin3.api import (
     Track,
     t_,
 )
+from picard.script import ScriptParser
 from picard.track import NonAlbumTrack
 from picard.util import thread
 from PyQt6.QtWidgets import QFileDialog
@@ -527,7 +528,7 @@ class ReplayGain2OptionsPage(OptionsPage):
             self.ui.rsgain_command.setText(path)
 
 
-def script_function_replaygain_album(logger: Logger, parser):
+def script_function_replaygain_album(logger: Logger, parser: ScriptParser):
     logger.info(f"the parser is {json.dumps(parser)}")
     return
 
@@ -549,6 +550,11 @@ def enable(api: PluginApi):
     api.register_album_action(ScanAlbums)
     api.register_cluster_action(ScanCluster)
     api.register_options_page(ReplayGain2OptionsPage)
+    api.register_album_metadata_processor(
+        lambda a, b, c, d: api.logger.info(
+            f"I foudn the album {b.metadata.get('title')}"
+        )
+    )
     api.register_script_function(
         lambda parser: script_function_replaygain_album(api.logger, parser),
         name="replaygain_album",
