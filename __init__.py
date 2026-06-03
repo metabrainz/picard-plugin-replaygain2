@@ -583,7 +583,10 @@ def albumgain_callback(api: PluginApi, album: Album, result=None, error=None):
 def replaygain_album_on_stage(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
-    api.logger.info(f"I found the album {metadata.keys()}")
+    api.logger.info(
+        f"I found the album tracks {[track.files for track in album.tracks]}"
+    )
+    api.logger.info(f"I found the album {metadata.items()}")
     api.logger.info(f"what is this {options}")
     window = api.tagger.window
     window.set_statusbar_message(
