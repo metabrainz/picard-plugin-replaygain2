@@ -199,6 +199,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         if not isinstanceany(file, SUPPORTED_FORMATS):
             raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
         files.append(file)
+        api.logger.debug(f"adding valid obj {obj} with files {obj.files}")
         valid_list.append(obj)
     api.logger.debug(f"files length: {len(files)}")
     api.logger.debug(f"valid list length: {len(valid_list)}")
@@ -266,7 +267,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         results.append(result)
 
     # Update track metadata with results
-    api.logger.debug(f"about to update metadata with results")
+    api.logger.debug(f"about to update metadata with results {valid_list}")
     for i, item in enumerate(valid_list):
         if isinstance(item, Track):
             api.logger.debug(f"wow, its a track {item}")
