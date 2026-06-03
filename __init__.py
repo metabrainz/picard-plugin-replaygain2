@@ -184,7 +184,9 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     files = list()
     valid_list = list()
     for obj in input_objs:
+        api.logger.debug(f"LOOKING FOR OBJECTS 1: {obj}")
         if isinstance(obj, Track):
+            api.logger.debug(f"LOOKING FOR OBJECTS 2: {obj.files}")
             if not obj.files:
                 continue
             file = obj.files[0]
@@ -269,6 +271,9 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
             else:
                 opus_mode = OpusMode.STANDARD
 
+            api.logger.info(
+                f"About to update replaygain metadata: {file.metadata}, {results}, {album_result}"
+            )
             update_metadata(
                 api.plugin_config,
                 file.metadata,
