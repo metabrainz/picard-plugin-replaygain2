@@ -370,6 +370,7 @@ class ScanTracks(BaseAction):
 
 def albumgain_callback(api: PluginApi, album: Album, result=None, error=None):
     window = api.tagger.window
+    progress = ""
     if error is None:
         for track in album.tracks:
             for file in track.files:
@@ -379,16 +380,18 @@ def albumgain_callback(api: PluginApi, album: Album, result=None, error=None):
         window.set_statusbar_message(
             api.tr(
                 "statusbar.success.albums",
-                'Successfully calculated ReplayGain for "{album}".',
+                'Successfully calculated ReplayGain for "{album}"{progress}.',
                 album=album.metadata["album"],
+                progress=progress,
             )
         )
     else:
         window.set_statusbar_message(
             api.tr(
                 "statusbar.failure.albums",
-                'Failed to calculate ReplayGain for "{album}"',
+                'Failed to calculate ReplayGain for "{album}"{progress}.',
                 album=album.metadata["album"],
+                progress=progress,
             )
         )
 
