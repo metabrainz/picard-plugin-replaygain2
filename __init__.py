@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import itertools
 import json
 from logging import Logger
 import os
@@ -84,6 +85,8 @@ TAGS = (
     "r128_album_gain",
     "r128_track_gain",
 )
+
+RSGAIN_TABLE_HEADER_LENGTH = 1
 
 
 class ClipMode(Enum):
@@ -178,6 +181,86 @@ def update_metadata(config, metadata, track_result, album_result, is_nat, opus_m
                 "replaygain_reference_loudness",
                 f"{float(config['target_loudness']):.2f} LUFS",
             )
+
+
+def calculate_replaygain_v2(files: list[File], is_nats: list[bool], options):
+    api = PluginApi.get_api()
+
+    # Validate file formats
+    for file in files:
+        if not isinstanceany(file, SUPPORTED_FORMATS):
+            raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
+    # INVARIANT: All files are a valid format
+
+    filenames = [file.filename for file in files]
+    call: Any = [api.plugin_config["rsgain_command"]] + options + filenames
+    for item in call:
+        item.encode("utf-8")
+
+    # Prevent an unwanted console spawn in Windows
+    si = None
+    if os.name == "nt":
+        si = subprocess.STARTUPINFO()
+        si.dwFlags = subprocess.STARTF_USESHOWWINDOW
+        si.wShowWindow = subprocess.SW_HIDE
+
+    # Execute the scan with rsgain
+    lines = list()
+    api.logger.debug(f"Running rsgain with options: {' '.join(options)}")
+    api.logger.debug(f"Running rsgain with call: {call}")
+    with subprocess.Popen(  # nosec: B603
+        call,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        startupinfo=si,
+        encoding="utf-8",
+        text=True,
+    ) as process:
+        (output, _unused) = process.communicate()
+        rc = process.poll()
+        if rc:
+            api.logger.debug(process.stderr)
+            raise ReplayGain2Error(f"rsgain returned non-zero code ({rc})")
+        api.logger.debug(output)
+        lines = output.splitlines()
+
+    should_save_album_tags = api.plugin_config["album_tags"]
+    rsgain_album_row_length = 1 if should_save_album_tags else 0
+    valid_rsgain_output_length = (
+        len(files) + RSGAIN_TABLE_HEADER_LENGTH + rsgain_album_row_length
+    )
+    if len(lines) != valid_rsgain_output_length:
+        raise ReplayGain2Error(f"Unexpected output from rsgain: {lines}")
+
+    lines.pop(0)  # Don't care about the table header
+
+    album_result = None
+    if should_save_album_tags:
+        album_result = parse_result(lines[-1])
+        lines.pop(-1)
+
+    results = list()
+    for line in lines:
+        result = parse_result(line)
+        if result is None:
+            raise ReplayGain2Error("Failed to parse result")
+        results.append(result)
+
+    for i, file in enumerate(files):
+        opus_mode = (
+            api.plugin_config["opus_mode"]
+            if isinstance(file, OggOpusFile)
+            else OpusMode.STANDARD
+        )
+
+        update_metadata(
+            api.plugin_config,
+            file.metadata,
+            results[i],
+            album_result,
+            is_nats[i],
+            opus_mode,
+        )
 
 
 def calculate_replaygain(api: PluginApi, input_objs, options):
@@ -604,9 +687,21 @@ def replaygain_album_on_stage(
             count=1,
         )
     )
+
+    track_files_forest = [
+        [(file, isinstance(track, NonAlbumTrack)) for file in track.files]
+        for track in album.tracks
+    ]
+    track_files_flattened = [pair for track in track_files_forest for pair in track]
+    track_files = [file for file, _ in track_files_flattened]
+    is_non_album = [is_nat for _, is_nat in track_files_flattened]
+
     thread.run_task(
         partial(
-            calculate_replaygain, api, album.tracks, build_options(api.plugin_config)
+            calculate_replaygain_v2,
+            track_files,
+            is_non_album,
+            build_options(api.plugin_config),
         ),
         partial(albumgain_callback, api, album),
     )
