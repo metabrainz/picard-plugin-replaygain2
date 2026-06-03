@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from logging import Logger
 import os
 import shutil
 import subprocess  # nosec: B404
@@ -525,7 +526,8 @@ class ReplayGain2OptionsPage(OptionsPage):
             self.ui.rsgain_command.setText(path)
 
 
-def script_function_replaygain_album(parser):
+def script_function_replaygain_album(logger: Logger, parser):
+    logger.info(f"the parser is {parser}")
     return
 
 
@@ -547,5 +549,6 @@ def enable(api: PluginApi):
     api.register_cluster_action(ScanCluster)
     api.register_options_page(ReplayGain2OptionsPage)
     api.register_script_function(
-        script_function_replaygain_album, name="replaygain_album"
+        lambda parser: script_function_replaygain_album(api.logger, parser),
+        name="replaygain_album",
     )
