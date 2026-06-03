@@ -276,7 +276,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         api.logger.debug(
             f"about to update metadata with results {len(filelist)} {filelist}"
         )
-        for file in filelist:
+        for file in files:
             if isinstance(file, OggOpusFile):
                 opus_mode = api.plugin_config["opus_mode"]
             else:
