@@ -223,6 +223,7 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         (output, _unused) = process.communicate()
         rc = process.poll()
         if rc:
+            api.logger.debug(process.stderr)
             raise ReplayGain2Error(f"rsgain returned non-zero code ({rc})")
         api.logger.debug(output)
         lines = output.splitlines()
@@ -366,34 +367,6 @@ class ScanTracks(BaseAction):
             window.set_statusbar_message(
                 self.api.tr("statusbar.failure", "Could not calculate ReplayGain.")
             )
-
-
-def albumgain_callback(api: PluginApi, album: Album, result=None, error=None):
-    window = api.tagger.window
-    progress = ""
-    if error is None:
-        for track in album.tracks:
-            for file in track.files:
-                file.update()
-            track.update()
-        album.update()
-        window.set_statusbar_message(
-            api.tr(
-                "statusbar.success.albums",
-                'Successfully calculated ReplayGain for "{album}"{progress}.',
-                album=album.metadata["album"],
-                progress=progress,
-            )
-        )
-    else:
-        window.set_statusbar_message(
-            api.tr(
-                "statusbar.failure.albums",
-                'Failed to calculate ReplayGain for "{album}"{progress}.',
-                album=album.metadata["album"],
-                progress=progress,
-            )
-        )
 
 
 class ScanAlbums(BaseAction):
@@ -560,6 +533,34 @@ class ReplayGain2OptionsPage(OptionsPage):
 def script_function_replaygain_album(logger: Logger, parser: ScriptParser):
     logger.info(f"the parser is {json.dumps(parser)}")
     return
+
+
+def albumgain_callback(api: PluginApi, album: Album, result=None, error=None):
+    window = api.tagger.window
+    progress = ""
+    if error is None:
+        for track in album.tracks:
+            for file in track.files:
+                file.update()
+            track.update()
+        album.update()
+        window.set_statusbar_message(
+            api.tr(
+                "statusbar.success.albums",
+                'Successfully calculated ReplayGain for "{album}"{progress}.',
+                album=album.metadata["album"],
+                progress=progress,
+            )
+        )
+    else:
+        window.set_statusbar_message(
+            api.tr(
+                "statusbar.failure.albums",
+                'Failed to calculate ReplayGain for "{album}"{progress}.',
+                album=album.metadata["album"],
+                progress=progress,
+            )
+        )
 
 
 def replaygain_album_on_stage(
