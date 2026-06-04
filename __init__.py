@@ -527,9 +527,11 @@ class ScanTracks(BaseAction):
             )
 
 
-def albumgain_callback(
-    progress: str, album: Album, album_name: str, result=None, error=None
-):
+def albumgain_callback(progress: str, album: Album, result=None, error=None):
+    if not album.loaded:
+        raise ReplayGain2Error(
+            "Cannot update Album replaygain if the album is not loaded"
+        )
     if error is None:
         for track in album.tracks:
             for file in track.files:
@@ -537,11 +539,11 @@ def albumgain_callback(
             track.update()
         album.update()
         WindowStatusbarReplaygainCalculationMessages.success(
-            album_name, progress, "gayalbum2"
+            album.metadata["album"], progress, "album"
         )
     else:
         WindowStatusbarReplaygainCalculationMessages.failure(
-            album_name, progress, "gayalbum3"
+            album.metadata["album"], progress, "album"
         )
 
 
@@ -687,17 +689,9 @@ def album_metadata_processor_callback(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
     def runwhenloaded():
-        api.logger.debug(f"album is {album}")
-        api.logger.debug(f"album tracks are {album.tracks}")
-        api.logger.debug(
-            f"album track files are {[track.files for track in album.tracks]}"
-        )
-        api.logger.debug(f"metadata is {metadata}")
-        api.logger.debug(f"options are {options}")
-        album_name = metadata.get("album") or "debug"
-        WindowStatusbarReplaygainCalculationMessages.inprogress(
-            album_name, 1, "gayalbum"
-        )
+        album_name = album.metadata["album"]
+        WindowStatusbarReplaygainCalculationMessages.inprogress(album_name, 1, "album")
+
         config = PluginConfig(api)
         thread.run_task(
             partial(
@@ -705,9 +699,10 @@ def album_metadata_processor_callback(
                 ReplaygainablePair.from_album(album),
                 build_rsgain_options(config),
             ),
-            partial(albumgain_callback, "", album, album_name),
+            partial(albumgain_callback, "", album),
         )
 
+    # Must run_when_loaded, else tracks will not be present on the Album object
     album.run_when_loaded(runwhenloaded)
 
 
