@@ -29,6 +29,7 @@ from picard.plugin3.api import (
     BaseAction,
     Cluster,
     File,
+    Metadata,
     OptionsPage,
     PluginApi,
     Track,
@@ -501,6 +502,7 @@ class ReplayGain2OptionsPage(OptionsPage):
             self._opus_modes[self.api.plugin_config["opus_mode"]]
         )
         self.ui.opus_m23.setChecked(self.api.plugin_config["opus_m23"])
+        self.ui.album_load.setChecked(self.api.plugin_config["album_load"])
 
     def save(self):
         self.api.plugin_config["rsgain_command"] = self.ui.rsgain_command.text()
@@ -515,6 +517,7 @@ class ReplayGain2OptionsPage(OptionsPage):
         self.api.plugin_config["max_peak"] = self.ui.max_peak.value()
         self.api.plugin_config["opus_mode"] = self.ui.opus_mode.currentData()
         self.api.plugin_config["opus_m23"] = self.ui.opus_m23.isChecked()
+        self.api.plugin_config["album_load"] = self.ui.album_load.isChecked()
 
     def rsgain_command_browse(self):
         path, _filter = QFileDialog.getOpenFileName(
@@ -523,6 +526,15 @@ class ReplayGain2OptionsPage(OptionsPage):
         if path:
             path = os.path.normpath(path)
             self.ui.rsgain_command.setText(path)
+
+
+def calculate_replaygain_on_album_load(
+    api: PluginApi, album: Album, _metadata: Metadata, _options
+):
+    if not api.plugin_config["album_load"]:
+        return
+
+    album.run_when_loaded(lambda: ScanAlbums().callback([album]))
 
 
 def enable(api: PluginApi):
@@ -537,7 +549,9 @@ def enable(api: PluginApi):
     api.plugin_config.register_option("max_peak", 0)
     api.plugin_config.register_option("opus_mode", OpusMode.STANDARD)
     api.plugin_config.register_option("opus_m23", False)
+    api.plugin_config.register_option("album_load", False)
     api.register_track_action(ScanTracks)
     api.register_album_action(ScanAlbums)
     api.register_cluster_action(ScanCluster)
     api.register_options_page(ReplayGain2OptionsPage)
+    api.register_album_metadata_processor(calculate_replaygain_on_album_load)
