@@ -686,23 +686,29 @@ class ReplayGain2OptionsPage(OptionsPage):
 def album_metadata_processor_callback(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
-    album.load()
-    api.logger.debug(f"album is {album}")
-    api.logger.debug(f"album tracks are {album.tracks}")
-    api.logger.debug(f"album track files are {[track.files for track in album.tracks]}")
-    api.logger.debug(f"metadata is {metadata}")
-    api.logger.debug(f"options are {options}")
-    album_name = metadata.get("album") or "debug"
-    WindowStatusbarReplaygainCalculationMessages.inprogress(album_name, 1, "gayalbum")
-    config = PluginConfig(api)
-    thread.run_task(
-        partial(
-            calculate_replaygain_v2,
-            ReplaygainablePair.from_album(album),
-            build_rsgain_options(config),
-        ),
-        partial(albumgain_callback, "", album, album_name),
-    )
+    def runwhenloaded():
+        api.logger.debug(f"album is {album}")
+        api.logger.debug(f"album tracks are {album.tracks}")
+        api.logger.debug(
+            f"album track files are {[track.files for track in album.tracks]}"
+        )
+        api.logger.debug(f"metadata is {metadata}")
+        api.logger.debug(f"options are {options}")
+        album_name = metadata.get("album") or "debug"
+        WindowStatusbarReplaygainCalculationMessages.inprogress(
+            album_name, 1, "gayalbum"
+        )
+        config = PluginConfig(api)
+        thread.run_task(
+            partial(
+                calculate_replaygain_v2,
+                ReplaygainablePair.from_album(album),
+                build_rsgain_options(config),
+            ),
+            partial(albumgain_callback, "", album, album_name),
+        )
+
+    album.run_when_loaded(runwhenloaded)
 
 
 def enable(api: PluginApi):
