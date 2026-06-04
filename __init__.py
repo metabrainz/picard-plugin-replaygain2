@@ -96,6 +96,7 @@ PLUGIN_CONFIG_CLIP_MODE = "clip_mode"
 PLUGIN_CONFIG_MAX_PEAK = "max_peak"
 PLUGIN_CONFIG_OPUS_MODE = "opus_mode"
 PLUGIN_CONFIG_OPUS_M23 = "opus_m23"
+PLUGIN_CONFIG_ALBUM_LOAD = "album_load"
 
 
 class ClipMode(Enum):
@@ -198,6 +199,14 @@ class PluginConfig:
     @should_opus_r128_to_m23.setter
     def should_opus_r128_to_m23(self, value: bool):
         self.api.plugin_config[PLUGIN_CONFIG_OPUS_M23] = value
+
+    @property
+    def should_calculate_on_album_load(self) -> bool:
+        return self.api.plugin_config[PLUGIN_CONFIG_ALBUM_LOAD]
+
+    @should_calculate_on_album_load.setter
+    def should_calculate_on_album_load(self, value: bool):
+        self.api.plugin_config[PLUGIN_CONFIG_ALBUM_LOAD] = value
 
 
 class WindowStatusbarReplaygainCalculationMessages:
@@ -490,10 +499,9 @@ class ScanTracks(BaseAction):
 
     @override
     def callback(self, objs):
-        config = self.api.plugin_config
-        window = self.api.tagger.window
+        config = PluginConfig()
 
-        if not does_rsgain_path_still_exist(config["rsgain_command"], window):
+        if not does_rsgain_path_still_exist(config.rsgain_path):
             return
         tracks: list[Track] = list(filter(lambda o: isinstance(o, Track), objs))
         self.options = build_rsgain_options(config)
@@ -512,7 +520,6 @@ class ScanTracks(BaseAction):
         )
 
     def _replaygain_callback(self, tracks, result=None, error=None):
-        window = self.api.tagger.window
         if error is None:
             for track in tracks:
                 for file in track.files:
@@ -589,7 +596,7 @@ class ScanAlbums(BaseAction):
 
     def _albumgain_callback(self, album: Album, result=None, error=None):
         progress = self._format_progress()
-        albumgain_callback(progress, album, album.metadata["album"], result, error)
+        albumgain_callback(progress, album, result, error)
 
 
 class ReplayGain2OptionsPage(OptionsPage):
@@ -658,6 +665,7 @@ class ReplayGain2OptionsPage(OptionsPage):
             self._load_opus_mode(self.plugin_config.opus_mode)
         )
         self.ui.opus_m23.setChecked(self.plugin_config.should_opus_r128_to_m23)
+        self.ui.album_load.setChecked(self.plugin_config.should_calculate_on_album_load)
 
     @override
     def save(self):
@@ -675,6 +683,9 @@ class ReplayGain2OptionsPage(OptionsPage):
         self.plugin_config.max_peak_db = self.ui.max_peak.value()
         self.plugin_config.opus_mode = self.ui.opus_mode.currentData()
         self.plugin_config.should_opus_r128_to_m23 = self.ui.opus_m23.isChecked()
+        self.plugin_config.should_calculate_on_album_load = (
+            self.ui.album_load.isChecked()
+        )
 
     def rsgain_command_browse(self):
         path, _filter = QFileDialog.getOpenFileName(
@@ -718,6 +729,7 @@ def enable(api: PluginApi):
     api.plugin_config.register_option(PLUGIN_CONFIG_MAX_PEAK, 0)
     api.plugin_config.register_option(PLUGIN_CONFIG_OPUS_MODE, OpusMode.STANDARD)
     api.plugin_config.register_option(PLUGIN_CONFIG_OPUS_M23, False)
+    api.plugin_config.register_option(PLUGIN_CONFIG_ALBUM_LOAD, False)
     api.register_track_action(ScanTracks)
     api.register_album_action(ScanAlbums)
     api.register_cluster_action(ScanCluster)
