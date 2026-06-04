@@ -10,7 +10,7 @@ import subprocess  # nosec: B404
 from collections import OrderedDict
 from enum import Enum, IntEnum
 from functools import partial
-from typing import Any
+from typing import Any, Callable
 
 from picard.formats import (
     AiffFile,
@@ -29,6 +29,7 @@ from picard.formats import (
     WAVFile,
     WavPackFile,
 )
+from picard.item import ListOfMetadataItems
 from picard.metadata import Metadata
 from picard.plugin3.api import (
     Album,
@@ -96,15 +97,26 @@ class ReplaygainablePair:
     is_non_album_track: bool
 
     @classmethod
-    def from_album(cls, album: Album) -> list["ReplaygainablePair"]:
+    def from_files(
+        cls, files: ListOfMetadataItems, is_non_album_track: bool
+    ) -> list["ReplaygainablePair"]:
+        return [ReplaygainablePair(file, is_non_album_track) for file in files]
+
+    @classmethod
+    def from_tracks(cls, tracks: list[Track]) -> list["ReplaygainablePair"]:
         track_files_forest = [
-            [
-                ReplaygainablePair(file, isinstance(track, NonAlbumTrack))
-                for file in track.files
-            ]
-            for track in album.tracks
+            cls.from_files(track.files, isinstance(track, NonAlbumTrack))
+            for track in tracks
         ]
         return [pair for track in track_files_forest for pair in track]
+
+    @classmethod
+    def from_cluster(cls, cluster: Cluster) -> list["ReplaygainablePair"]:
+        return cls.from_files(cluster.files, True)
+
+    @classmethod
+    def from_album(cls, album: Album) -> list["ReplaygainablePair"]:
+        return cls.from_tracks(album.tracks)
 
 
 class ClipMode(Enum):
@@ -415,7 +427,7 @@ class ScanCluster(BaseAction):
 
         if not rsgain_found(config["rsgain_command"], window):
             return
-        clusters = list(filter(lambda o: isinstance(o, Cluster), objs))
+        clusters: list[Cluster] = list(filter(lambda o: isinstance(o, Cluster), objs))
 
         self.options = build_options(config)
         num_clusters = len(clusters)
@@ -430,8 +442,9 @@ class ScanCluster(BaseAction):
             )
         )
         for cluster in clusters:
+            track_files = ReplaygainablePair.from_cluster(cluster)
             thread.run_task(
-                partial(calculate_replaygain, self.api, cluster.files, self.options),
+                partial(calculate_replaygain_v2, track_files, self.options),
                 partial(self._replaygain_callback, cluster.files),
             )
 
@@ -472,8 +485,9 @@ class ScanTracks(BaseAction):
                 count=num_tracks,
             )
         )
+        track_files = ReplaygainablePair.from_tracks(tracks)
         thread.run_task(
-            partial(calculate_replaygain, self.api, tracks, self.options),
+            partial(calculate_replaygain_v2, track_files, self.options),
             partial(self._replaygain_callback, tracks),
         )
 
