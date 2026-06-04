@@ -686,6 +686,11 @@ class ReplayGain2OptionsPage(OptionsPage):
 def album_metadata_processor_callback(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
+    api.logger.debug(f"album is {album}")
+    api.logger.debug(f"album tracks are {album.tracks}")
+    api.logger.debug(f"album track files are {[track.files for track in album.tracks]}")
+    api.logger.debug(f"metadata is {metadata}")
+    api.logger.debug(f"options are {options}")
     album_name = metadata.get("album") or "debug"
     WindowStatusbarReplaygainCalculationMessages.inprogress(album_name, 1, "gayalbum")
     config = PluginConfig(api)
