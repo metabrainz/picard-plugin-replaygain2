@@ -685,7 +685,7 @@ def album_metadata_processor_callback(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
     album_name = metadata.get("album") or "debug"
-    WindowStatusbarReplaygainCalculationMessages.inprogress(album_name, 1, "album")
+    WindowStatusbarReplaygainCalculationMessages.inprogress(album_name, 1, "gayalbum")
     config = PluginConfig(api)
     thread.run_task(
         partial(
