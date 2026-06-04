@@ -299,7 +299,9 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     files = list()
     valid_list = list()
     for obj in input_objs:
-        api.logger.debug(f"This object is a {type(obj)}")
+        api.logger.debug(
+            f"This object is a {type(obj)} isinstance Track {isinstance(obj, Track)} isinstance File {isinstance(obj, File)} and isinstance NonAlbumTrack {isinstance(obj, NonAlbumTrack)}"
+        )
         if isinstance(obj, Track):
             if not obj.files:
                 continue
