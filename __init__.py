@@ -597,7 +597,7 @@ class ReplayGain2OptionsPage(OptionsPage):
 
         for mode in ClipMode:
             label = self._load_clip_mode(mode)
-            self.ui.opus_mode.addItem(label, mode)
+            self.ui.clip_mode.addItem(label, mode)
 
         for mode in OpusMode:
             label = self._load_opus_mode(mode)
