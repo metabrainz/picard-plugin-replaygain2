@@ -531,10 +531,8 @@ class ReplayGain2OptionsPage(OptionsPage):
 def calculate_replaygain_on_album_load(
     api: PluginApi, album: Album, _metadata: Metadata, _options
 ):
-    if not api.plugin_config["album_load"]:
-        return
-
-    album.run_when_loaded(lambda: ScanAlbums().callback([album]))
+    if api.plugin_config["album_load"]:
+        album.run_when_loaded(lambda: ScanAlbums().callback([album]))
 
 
 def enable(api: PluginApi):
