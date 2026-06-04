@@ -8,6 +8,7 @@
 "option.opus.r128" = "R128_*_GAIN-Tags schreiben"
 "option.opus.standard" = "Standard-ReplayGain-Tags schreiben"
 "qt.ReplayGain2OptionsPage.album_tags.label" = "Album-Gain/-Peak berechnen"
+"qt.ReplayGain2OptionsPage.album_load.label" = "ReplayGain berechnen, wenn ein Album geladen wird"
 "qt.ReplayGain2OptionsPage.album_aes77.label" = "Lautesten Titel für Album-Loudness verwenden (nach AES77-Empfehlung)"
 "qt.ReplayGain2OptionsPage.clip_mode.label" = "Clipping-Schutz"
 "qt.ReplayGain2OptionsPage.max_peak.label" = "Maximaler Peak (dB)"
