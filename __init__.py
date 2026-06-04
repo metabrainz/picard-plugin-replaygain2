@@ -296,12 +296,11 @@ def calculate_replaygain_v2(pairs: list[ReplaygainablePair], options):
 
 def calculate_replaygain(api: PluginApi, input_objs, options):
     # Make sure files are of supported type, build file list
-    files = list[File]()
+    files = list()
     valid_list = list()
     for obj in input_objs:
-        api.logger.debug(f"LOOKING FOR OBJECTS 1: {obj}")
+        api.logger.debug(f"This object is a {type(obj)}")
         if isinstance(obj, Track):
-            api.logger.debug(f"LOOKING FOR OBJECTS 2: {obj.files}")
             if not obj.files:
                 continue
             file = obj.files[0]
@@ -312,14 +311,10 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
 
         if not isinstanceany(file, SUPPORTED_FORMATS):
             raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
-        files.append(file)
-        api.logger.debug(f"adding valid obj {obj} with files {obj.files}")
+        files.append(file.filename)
         valid_list.append(obj)
-    api.logger.debug(f"files length: {len(files)}")
-    api.logger.debug(f"valid list length: {len(valid_list)}")
 
-    filenames = [file.filename for file in files]
-    call: Any = [api.plugin_config["rsgain_command"]] + options + filenames
+    call = [api.plugin_config["rsgain_command"]] + options + files
     for item in call:
         item.encode("utf-8")
 
@@ -333,7 +328,6 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     # Execute the scan with rsgain
     lines = list()
     api.logger.debug(f"Running rsgain with options: {' '.join(options)}")
-    api.logger.debug(f"Running rsgain with call: {call}")
     with subprocess.Popen(  # nosec: B603
         call,
         stdout=subprocess.PIPE,
@@ -345,14 +339,12 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         (output, _unused) = process.communicate()
         rc = process.poll()
         if rc:
-            api.logger.debug(process.stderr)
             raise ReplayGain2Error(f"rsgain returned non-zero code ({rc})")
         api.logger.debug(output)
         lines = output.splitlines()
     album_tags = api.plugin_config["album_tags"]
 
     # Make sure the number of rows in the output is what we expected
-    api.logger.debug(f"about to check rows")
     if (
         len(lines)
         != 1  # Table header
@@ -365,14 +357,12 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
     lines.pop(0)  # Don't care about the table header
 
     # Parse album result
-    api.logger.debug(f"about to parse album result")
     album_result = None
     if album_tags:
         album_result = parse_result(lines[-1])
         lines.pop(-1)
 
     # Parse track results
-    api.logger.debug(f"about to parse track results")
     results = list()
     for line in lines:
         result = parse_result(line)
@@ -381,29 +371,18 @@ def calculate_replaygain(api: PluginApi, input_objs, options):
         results.append(result)
 
     # Update track metadata with results
-    api.logger.debug(
-        f"about to update metadata with results {valid_list} with files {[valid_obj.files for valid_obj in valid_list]}"
-    )
     for i, item in enumerate(valid_list):
         if isinstance(item, Track):
-            api.logger.debug(f"wow, its a track {item}")
             filelist = item.files
         else:  # is a file
-            api.logger.debug(f"wow, its a file {item}")
             filelist = [item]
 
-        api.logger.debug(
-            f"about to update metadata with results {len(filelist)} {filelist}"
-        )
-        for file in files:
+        for file in filelist:
             if isinstance(file, OggOpusFile):
                 opus_mode = api.plugin_config["opus_mode"]
             else:
                 opus_mode = OpusMode.STANDARD
 
-            api.logger.info(
-                f"About to update replaygain metadata: {file.metadata}, {results}, {album_result}"
-            )
             update_metadata(
                 api.plugin_config,
                 file.metadata,
@@ -444,7 +423,7 @@ class ScanCluster(BaseAction):
         for cluster in clusters:
             track_files = ReplaygainablePair.from_cluster(cluster)
             thread.run_task(
-                partial(calculate_replaygain_v2, track_files, self.options),
+                partial(calculate_replaygain, self.api, cluster.files, self.options),
                 partial(self._replaygain_callback, cluster.files),
             )
 
