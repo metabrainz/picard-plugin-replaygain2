@@ -686,6 +686,7 @@ class ReplayGain2OptionsPage(OptionsPage):
 def album_metadata_processor_callback(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
+    album.load()
     api.logger.debug(f"album is {album}")
     api.logger.debug(f"album tracks are {album.tracks}")
     api.logger.debug(f"album track files are {[track.files for track in album.tracks]}")
