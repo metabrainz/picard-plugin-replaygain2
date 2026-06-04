@@ -525,7 +525,9 @@ class ScanTracks(BaseAction):
             )
 
 
-def albumgain_callback(progress: str, album: Album, result=None, error=None):
+def albumgain_callback(
+    progress: str, album: Album, album_name: str, result=None, error=None
+):
     if error is None:
         for track in album.tracks:
             for file in track.files:
@@ -533,11 +535,11 @@ def albumgain_callback(progress: str, album: Album, result=None, error=None):
             track.update()
         album.update()
         WindowStatusbarReplaygainCalculationMessages.success(
-            album.metadata["album"], progress, "album"
+            album_name, progress, "album"
         )
     else:
         WindowStatusbarReplaygainCalculationMessages.failure(
-            album.metadata["album"], progress, "album"
+            album_name, progress, "album"
         )
 
 
@@ -583,7 +585,7 @@ class ScanAlbums(BaseAction):
 
     def _albumgain_callback(self, album: Album, result=None, error=None):
         progress = self._format_progress()
-        albumgain_callback(progress, album, result, error)
+        albumgain_callback(progress, album, album.metadata["album"], result, error)
 
 
 class ReplayGain2OptionsPage(OptionsPage):
@@ -692,7 +694,7 @@ def album_metadata_processor_callback(
             ReplaygainablePair.from_album(album),
             build_rsgain_options(config),
         ),
-        partial(albumgain_callback, "", album),
+        partial(albumgain_callback, "", album, metadata["album"]),
     )
 
 
