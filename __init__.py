@@ -535,11 +535,11 @@ def albumgain_callback(
             track.update()
         album.update()
         WindowStatusbarReplaygainCalculationMessages.success(
-            album_name, progress, "album"
+            album_name, progress, "gayalbum2"
         )
     else:
         WindowStatusbarReplaygainCalculationMessages.failure(
-            album_name, progress, "album"
+            album_name, progress, "gayalbum3"
         )
 
 
