@@ -684,9 +684,8 @@ class ReplayGain2OptionsPage(OptionsPage):
 def album_metadata_processor_callback(
     api: PluginApi, album: Album, metadata: Metadata, options
 ):
-    WindowStatusbarReplaygainCalculationMessages.inprogress(
-        metadata["album"], 1, "album"
-    )
+    album_name = metadata["album"]
+    WindowStatusbarReplaygainCalculationMessages.inprogress(album_name, 1, "album")
     config = PluginConfig(api)
     thread.run_task(
         partial(
@@ -694,7 +693,7 @@ def album_metadata_processor_callback(
             ReplaygainablePair.from_album(album),
             build_rsgain_options(config),
         ),
-        partial(albumgain_callback, "", album, metadata["album"]),
+        partial(albumgain_callback, "", album, album_name),
     )
 
 
