@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from dataclasses import dataclass
 import itertools
 import json
 from logging import Logger
@@ -87,6 +88,23 @@ TAGS = (
 )
 
 RSGAIN_TABLE_HEADER_LENGTH = 1
+
+
+@dataclass
+class ReplaygainablePair:
+    file: File
+    is_non_album_track: bool
+
+    @classmethod
+    def from_album(cls, album: Album) -> list["ReplaygainablePair"]:
+        track_files_forest = [
+            [
+                ReplaygainablePair(file, isinstance(track, NonAlbumTrack))
+                for file in track.files
+            ]
+            for track in album.tracks
+        ]
+        return [pair for track in track_files_forest for pair in track]
 
 
 class ClipMode(Enum):
@@ -183,10 +201,11 @@ def update_metadata(config, metadata, track_result, album_result, is_nat, opus_m
             )
 
 
-def calculate_replaygain_v2(files: list[File], is_nats: list[bool], options):
+def calculate_replaygain_v2(pairs: list[ReplaygainablePair], options):
     api = PluginApi.get_api()
 
     # Validate file formats
+    files = [pair.file for pair in pairs]
     for file in files:
         if not isinstanceany(file, SUPPORTED_FORMATS):
             raise ReplayGain2Error(f"File '{file.filename}' is of unsupported format")
@@ -227,7 +246,7 @@ def calculate_replaygain_v2(files: list[File], is_nats: list[bool], options):
     should_save_album_tags = api.plugin_config["album_tags"]
     rsgain_album_row_length = 1 if should_save_album_tags else 0
     valid_rsgain_output_length = (
-        len(files) + RSGAIN_TABLE_HEADER_LENGTH + rsgain_album_row_length
+        len(pairs) + RSGAIN_TABLE_HEADER_LENGTH + rsgain_album_row_length
     )
     if len(lines) != valid_rsgain_output_length:
         raise ReplayGain2Error(f"Unexpected output from rsgain: {lines}")
@@ -246,19 +265,19 @@ def calculate_replaygain_v2(files: list[File], is_nats: list[bool], options):
             raise ReplayGain2Error("Failed to parse result")
         results.append(result)
 
-    for i, file in enumerate(files):
+    for i, pair in enumerate(pairs):
         opus_mode = (
             api.plugin_config["opus_mode"]
-            if isinstance(file, OggOpusFile)
+            if isinstance(pair.file, OggOpusFile)
             else OpusMode.STANDARD
         )
 
         update_metadata(
             api.plugin_config,
-            file.metadata,
+            pair.file.metadata,
             results[i],
             album_result,
-            is_nats[i],
+            pair.is_non_album_track,
             opus_mode,
         )
 
@@ -499,8 +518,9 @@ class ScanAlbums(BaseAction):
             )
         )
         for album in albums:
+            track_files = ReplaygainablePair.from_album(album)
             thread.run_task(
-                partial(calculate_replaygain, self.api, album.tracks, self.options),
+                partial(calculate_replaygain_v2, track_files, self.options),
                 partial(self._albumgain_callback, album),
             )
 
@@ -688,19 +708,11 @@ def replaygain_album_on_stage(
         )
     )
 
-    track_files_forest = [
-        [(file, isinstance(track, NonAlbumTrack)) for file in track.files]
-        for track in album.tracks
-    ]
-    track_files_flattened = [pair for track in track_files_forest for pair in track]
-    track_files = [file for file, _ in track_files_flattened]
-    is_non_album = [is_nat for _, is_nat in track_files_flattened]
-
+    track_files = ReplaygainablePair.from_album(album)
     thread.run_task(
         partial(
             calculate_replaygain_v2,
             track_files,
-            is_non_album,
             build_options(api.plugin_config),
         ),
         partial(albumgain_callback, api, album),
