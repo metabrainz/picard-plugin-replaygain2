@@ -206,7 +206,7 @@ class WindowStatusbarReplaygainCalculationMessages:
         api = PluginApi.get_api()
         api.tagger.window.set_statusbar_message(
             api.trn(
-                f"statusbar.calculating.{unit}s",
+                "statusbar.calculating.{unit}s",
                 "Calculating ReplayGain for {name}…",
                 "Calculating ReplayGain for {count} {unit}s…",
                 count,
@@ -221,10 +221,11 @@ class WindowStatusbarReplaygainCalculationMessages:
         api = PluginApi.get_api()
         api.tagger.window.set_statusbar_message(
             api.tr(
-                f"statusbar.success.{unit}s",
+                "statusbar.success.{unit}s",
                 'Successfully calculated ReplayGain for "{name}"{progress}.',
                 name=name,
                 progress=progress,
+                unit=unit,
             )
         )
 
@@ -233,10 +234,11 @@ class WindowStatusbarReplaygainCalculationMessages:
         api = PluginApi.get_api()
         api.tagger.window.set_statusbar_message(
             api.tr(
-                f"statusbar.failure.{unit}s",
+                "statusbar.failure.{unit}s",
                 'Failed to calculate ReplayGain for "{name}"{progress}.',
                 name=name,
                 progress=progress,
+                unit=unit,
             )
         )
 
