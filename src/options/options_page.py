@@ -78,6 +78,7 @@ class ReplayGain2OptionsPage(OptionsPage):
             self._get_opus_mode_label(self.plugin_config.opus_mode)
         )
         self.ui.opus_m23.setChecked(self.plugin_config.should_opus_r128_to_m23)
+        self.ui.album_load.setChecked(self.plugin_config.should_calculate_on_album_load)
 
     @override
     def save(self):
@@ -95,6 +96,9 @@ class ReplayGain2OptionsPage(OptionsPage):
         self.plugin_config.max_peak_db = self.ui.max_peak.value()
         self.plugin_config.opus_mode = self.ui.opus_mode.currentData()
         self.plugin_config.should_opus_r128_to_m23 = self.ui.opus_m23.isChecked()
+        self.plugin_config.should_calculate_on_album_load = (
+            self.ui.album_load.isChecked()
+        )
 
     def rsgain_command_browse(self):
         path, _filter = QFileDialog.getOpenFileName(

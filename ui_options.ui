@@ -255,6 +255,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QCheckBox" name="album_load">
+        <property name="text">
+         <string>album_load.label</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
