@@ -75,6 +75,7 @@ PLUGIN_CONFIG_CLIP_MODE = "clip_mode"
 PLUGIN_CONFIG_MAX_PEAK = "max_peak"
 PLUGIN_CONFIG_OPUS_MODE = "opus_mode"
 PLUGIN_CONFIG_OPUS_M23 = "opus_m23"
+PLUGIN_CONFIG_ALBUM_LOAD = "album_load"
 
 
 class ClipMode(Enum):

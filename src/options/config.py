@@ -4,6 +4,7 @@ from picard.plugin3.api import PluginApi
 
 from ..common.data import (
     PLUGIN_CONFIG_ALBUM_AES77,
+    PLUGIN_CONFIG_ALBUM_LOAD,
     PLUGIN_CONFIG_ALBUM_TAGS,
     PLUGIN_CONFIG_CLIP_MODE,
     PLUGIN_CONFIG_MAX_PEAK,
@@ -35,6 +36,7 @@ class PluginConfig:
         api.plugin_config.register_option(PLUGIN_CONFIG_MAX_PEAK, 0)
         api.plugin_config.register_option(PLUGIN_CONFIG_OPUS_MODE, OpusMode.STANDARD)
         api.plugin_config.register_option(PLUGIN_CONFIG_OPUS_M23, False)
+        api.plugin_config.register_option(PLUGIN_CONFIG_ALBUM_LOAD, False)
 
     @property
     def rsgain_path(self) -> str:
@@ -115,3 +117,11 @@ class PluginConfig:
     @should_opus_r128_to_m23.setter
     def should_opus_r128_to_m23(self, value: bool):
         self.api.plugin_config[PLUGIN_CONFIG_OPUS_M23] = value
+
+    @property
+    def should_calculate_on_album_load(self) -> bool:
+        return self.api.plugin_config[PLUGIN_CONFIG_ALBUM_LOAD]
+
+    @should_calculate_on_album_load.setter
+    def should_calculate_on_album_load(self, value: bool):
+        self.api.plugin_config[PLUGIN_CONFIG_ALBUM_LOAD] = value
