@@ -54,7 +54,7 @@
        <number>9</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="rsgain_command_label">
         <property name="font">
          <font>
           <bold>true</bold>
@@ -66,7 +66,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="rsgain_command_box">
         <item>
          <widget class="QLineEdit" name="rsgain_command">
           <property name="text">
@@ -84,7 +84,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="rsgain_download_label">
         <property name="text">
          <string>rsgain_command.download.label</string>
         </property>
@@ -131,7 +131,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="target_loudness_label">
         <property name="font">
          <font>
           <bold>true</bold>
@@ -162,7 +162,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="clip_mode_label">
         <property name="font">
          <font>
           <bold>true</bold>
@@ -187,7 +187,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="max_peak_label">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -221,7 +221,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="opus_mode_label">
         <property name="font">
          <font>
           <bold>true</bold>

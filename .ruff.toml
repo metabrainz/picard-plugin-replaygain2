@@ -1,1 +1,2 @@
+ignore = ["RUF012"]
 exclude = ["ui_*.py"]
