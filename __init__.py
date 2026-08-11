@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from picard.plugin3.api import PluginApi
 
 from .src.actions.scan_albums import ScanAlbums

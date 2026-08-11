@@ -65,7 +65,7 @@ def calculate_replaygain(api: PluginApi, pairs: list[ReplaygainablePair], option
         si.wShowWindow = subprocess.SW_HIDE
 
     # Execute the scan with rsgain
-    lines = list()
+    lines = []
     api.logger.debug(f"Running rsgain with options: {' '.join(options)}")
     with subprocess.Popen(  # nosec: B603
         call,
@@ -96,7 +96,7 @@ def calculate_replaygain(api: PluginApi, pairs: list[ReplaygainablePair], option
         album_result = parse_rsgain_result(lines[-1])
         lines.pop(-1)
 
-    results = list()
+    results = []
     for line in lines:
         result = parse_rsgain_result(line)
         if result is None:
@@ -161,4 +161,4 @@ def format_r128(result, config: PluginConfig):
     gain = float(result["gain"])
     if config.should_opus_r128_to_m23:
         gain += float(-23 - config.target_loudness)
-    return str(int(round(gain * 256.0)))
+    return str(round(gain * 256.0))
