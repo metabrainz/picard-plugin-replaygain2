@@ -27,16 +27,66 @@ class PluginConfig:
     @classmethod
     def register_with(cls, api: PluginApi):
         api.plugin_config.register_option(PLUGIN_CONFIG_RSGAIN_COMMAND, "rsgain")
-        api.plugin_config.register_option(PLUGIN_CONFIG_ALBUM_TAGS, True)
-        api.plugin_config.register_option(PLUGIN_CONFIG_ALBUM_AES77, False)
-        api.plugin_config.register_option(PLUGIN_CONFIG_TRUE_PEAK, False)
-        api.plugin_config.register_option(PLUGIN_CONFIG_REFERENCE_LOUDNESS, False)
-        api.plugin_config.register_option(PLUGIN_CONFIG_TARGET_LOUDNESS, -18)
-        api.plugin_config.register_option(PLUGIN_CONFIG_CLIP_MODE, ClipMode.POSITIVE)
-        api.plugin_config.register_option(PLUGIN_CONFIG_MAX_PEAK, 0)
-        api.plugin_config.register_option(PLUGIN_CONFIG_OPUS_MODE, OpusMode.STANDARD)
-        api.plugin_config.register_option(PLUGIN_CONFIG_OPUS_M23, False)
-        api.plugin_config.register_option(PLUGIN_CONFIG_ALBUM_LOAD, False)
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_ALBUM_TAGS,
+            True,
+            title=api.tr("qt.ReplayGain2OptionsPage.album_tags.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_ALBUM_AES77,
+            False,
+            title=api.tr("qt.ReplayGain2OptionsPage.album_aes77.help"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_TRUE_PEAK,
+            False,
+            title=api.tr("qt.ReplayGain2OptionsPage.true_peak.help"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_REFERENCE_LOUDNESS,
+            False,
+            title=api.tr("qt.ReplayGain2OptionsPage.reference_loudness.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_TARGET_LOUDNESS,
+            -18,
+            title=api.tr("qt.ReplayGain2OptionsPage.target_loudness.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_CLIP_MODE,
+            ClipMode.POSITIVE,
+            title=api.tr("qt.ReplayGain2OptionsPage.clip_mode.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_MAX_PEAK,
+            0,
+            title=api.tr("qt.ReplayGain2OptionsPage.max_peak.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_OPUS_MODE,
+            OpusMode.STANDARD,
+            title=api.tr("qt.ReplayGain2OptionsPage.opus_mode.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_OPUS_M23,
+            False,
+            title=api.tr("qt.ReplayGain2OptionsPage.opus_m23.label"),
+            in_profile=True,
+        )
+        api.plugin_config.register_option(
+            PLUGIN_CONFIG_ALBUM_LOAD,
+            False,
+            title=api.tr("qt.ReplayGain2OptionsPage.album_load.label"),
+            in_profile=True,
+        )
 
     @property
     def rsgain_path(self) -> str:

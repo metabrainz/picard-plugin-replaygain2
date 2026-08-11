@@ -1,10 +1,20 @@
 import os
 from typing import override
 
-from picard.plugin3.api import OptionsPage
+from picard.plugin3.api import OptionsPage, PageOptionConfigs
 from PyQt6.QtWidgets import QFileDialog
 
 from ..common.data import (
+    PLUGIN_CONFIG_ALBUM_AES77,
+    PLUGIN_CONFIG_ALBUM_LOAD,
+    PLUGIN_CONFIG_ALBUM_TAGS,
+    PLUGIN_CONFIG_CLIP_MODE,
+    PLUGIN_CONFIG_MAX_PEAK,
+    PLUGIN_CONFIG_OPUS_M23,
+    PLUGIN_CONFIG_OPUS_MODE,
+    PLUGIN_CONFIG_REFERENCE_LOUDNESS,
+    PLUGIN_CONFIG_TARGET_LOUDNESS,
+    PLUGIN_CONFIG_TRUE_PEAK,
     ClipMode,
     OpusMode,
 )
@@ -13,6 +23,21 @@ from .ui_options import Ui_ReplayGain2OptionsPage
 
 
 class ReplayGain2OptionsPage(OptionsPage):
+    OPTIONS: PageOptionConfigs = {
+        PLUGIN_CONFIG_ALBUM_TAGS: {"widgets": ["album_tags"]},
+        PLUGIN_CONFIG_ALBUM_AES77: {"widgets": ["album_aes77"]},
+        PLUGIN_CONFIG_TRUE_PEAK: {"widgets": ["true_peak"]},
+        PLUGIN_CONFIG_REFERENCE_LOUDNESS: {"widgets": ["reference_loudness"]},
+        PLUGIN_CONFIG_TARGET_LOUDNESS: {
+            "widgets": ["target_loudness", "target_loudness_label"]
+        },
+        PLUGIN_CONFIG_CLIP_MODE: {"widgets": ["clip_mode", "clip_mode_label"]},
+        PLUGIN_CONFIG_MAX_PEAK: {"widgets": ["max_peak", "max_peak_label"]},
+        PLUGIN_CONFIG_OPUS_MODE: {"widgets": ["opus_mode", "opus_mode_label"]},
+        PLUGIN_CONFIG_OPUS_M23: {"widgets": ["opus_m23"]},
+        PLUGIN_CONFIG_ALBUM_LOAD: {"widgets": ["album_load"]},
+    }
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_ReplayGain2OptionsPage()
