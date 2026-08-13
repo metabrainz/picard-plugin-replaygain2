@@ -1,5 +1,5 @@
 import os
-from typing import override
+from typing import ClassVar, override
 
 from picard.plugin3.api import OptionsPage, PageOptionConfigs
 from PyQt6.QtWidgets import QFileDialog
@@ -23,7 +23,7 @@ from .ui_options import Ui_ReplayGain2OptionsPage
 
 
 class ReplayGain2OptionsPage(OptionsPage):
-    OPTIONS: PageOptionConfigs = {
+    OPTIONS: ClassVar[PageOptionConfigs] = {
         PLUGIN_CONFIG_ALBUM_TAGS: {"widgets": ["album_tags"]},
         PLUGIN_CONFIG_ALBUM_AES77: {"widgets": ["album_aes77"]},
         PLUGIN_CONFIG_TRUE_PEAK: {"widgets": ["true_peak"]},

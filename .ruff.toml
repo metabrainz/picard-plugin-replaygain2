@@ -1,2 +1,2 @@
-ignore = ["RUF012"]
+ignore = ["N999"]
 exclude = ["ui_*.py"]
