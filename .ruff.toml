@@ -1,2 +1,4 @@
-ignore = ["N999"]
 exclude = ["ui_*.py"]
+
+[lint]
+ignore = ["N999"]
