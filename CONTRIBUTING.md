@@ -21,7 +21,7 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-To install the plugin for development inside Picard, you can install the plugin without git support. This allows testing any code changes directly without the need to commit and push changes.
+To install the plugin for development inside Picard, you can install the plugin without git support. This allows testing any code changes directly without the need to commit and push changes. Disabling and enabling the plugin Picard is enough to have Picard load the changed code again.
 
 Installing the plugin can be done using the `picard-cli` command line tool:
 
