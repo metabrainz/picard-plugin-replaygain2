@@ -1,0 +1,17 @@
+name: Run code checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run pre-commit hooks
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install pre-commit
+          pre-commit run --all-files
