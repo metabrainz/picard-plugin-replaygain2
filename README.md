@@ -28,3 +28,6 @@ The following file formats are supported:
 - MusePack _(Stream Version 8 only)_ (.mpc)
 
 This plugin is based on the original ReplayGain plugin by Philipp Wolfer and Sophist.
+## Contributing
+
+Please see the [Contribution Guidelines for MusicBrainz Picard Plugins](https://github.com/metabrainz/picard-plugins-registry/blob/main/PLUGIN_CONTRIBUTING.md) on how to help with development of this plugin.
