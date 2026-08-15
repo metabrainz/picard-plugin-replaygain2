@@ -1,1 +1,34 @@
+"action.albums" = "Calcula el Replay&Gain…"
+"action.cluster" = "Calcula el Replay&Gain de l'agrupació com a àlbum…"
+"action.tracks" = "Calcula el Replay&Gain…"
+"manifest.description" = "Calcula la informació de ReplayGain de pistes i àlbums"
+"manifest.name" = "ReplayGain 2.0"
+"option.clip_mode.disabled" = "Inhabilitat"
+"option.clip_mode.enabled_always" = "Habilitat sempre"
+"option.clip_mode.enabled_positive_gain" = "Habilitat només per a valors de guany positius"
+"option.opus.both" = "Escriu etiquetes estàndard i R128"
+"option.opus.r128" = "Escriu etiquetes R128_*_GAIN"
+"option.opus.standard" = "Escriu etiquetes de ReplayGain estàndard"
+"qt.ReplayGain2OptionsPage.clip_mode.label" = "Protecció contra la saturació"
+"qt.ReplayGain2OptionsPage.max_peak.label" = "Pic màxim (dB)"
+"qt.ReplayGain2OptionsPage.opus_mode.label" = "Fitxers Opus"
+"qt.ReplayGain2OptionsPage.rsgain_command.button.browse" = "Navega…"
+"qt.ReplayGain2OptionsPage.rsgain_command.download.label" = "<a href=\"https://github.com/complexlogic/rsgain\">Baixa rsgain</a>"
+"qt.ReplayGain2OptionsPage.rsgain_command.label" = "Camí de rsgain:"
+"qt.ReplayGain2OptionsPage.title" = "Paràmetres de ReplayGain 2.0"
+"statusbar.failure" = "No s'ha pogut calcular el ReplayGain."
+"statusbar.failure.albums" = "No s'ha pogut calcular el ReplayGain per a «{album}»{progress}."
+"statusbar.success" = "S'ha calculat el ReplayGain correctament."
+"statusbar.success.albums" = "S'ha calculat el ReplayGain correctament per a «{album}»{progress}."
 
+["statusbar.calculating.albums"]
+one = "S'està calculant el ReplayGain per a «{name}»…"
+other = "S'està calculant el ReplayGain per a {count} àlbums…"
+
+["statusbar.calculating.clusters"]
+one = "S'està calculant el ReplayGain per a «{name}»…"
+other = "S'està calculant el ReplayGain per a {count} agrupacions…"
+
+["statusbar.calculating.tracks"]
+one = "S'està calculant el ReplayGain per a «{name}»…"
+other = "S'està calculant el ReplayGain per a {count} pistes…"
