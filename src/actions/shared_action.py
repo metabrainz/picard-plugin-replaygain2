@@ -51,11 +51,15 @@ class BaseReplayGainAction[T](BaseAction):
             self.api, self.get_item_name(items[0]), self.num_items, self.unit
         )
         for item in items:
+            pairs = self.replaygainablepairs_of_item(item)
+            if not pairs:
+                self.api.logger.debug(f"No replaygainable pairs for item: {item}")
+                continue
             thread.run_task(
                 partial(
                     calculate_replaygain,
                     self.api,
-                    self.replaygainablepairs_of_item(item),
+                    pairs,
                     self.options,
                 ),
                 partial(self._result_callback, item),
