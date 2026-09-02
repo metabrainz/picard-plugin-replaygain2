@@ -4,6 +4,7 @@ from enum import Enum, IntEnum
 from picard.formats import (
     AiffFile,
     ASFFile,
+    DSFFile,
     FLACFile,
     MonkeysAudioFile,
     MP3File,
@@ -25,6 +26,7 @@ from picard.track import NonAlbumTrack
 SUPPORTED_FORMATS = (
     AiffFile,
     ASFFile,
+    DSFFile,
     FLACFile,
     MonkeysAudioFile,
     MP3File,
