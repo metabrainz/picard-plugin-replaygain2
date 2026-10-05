@@ -1,6 +1,11 @@
 # MusicBrainz Picard Replaygain 2.0
 
-MusicBrainz Picard 3 plugin to calculate ReplayGain information for tracks and albums according to the [ReplayGain 2.0 specification](https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification). This plugin depends on the ReplayGain utility [rsgain](https://github.com/complexlogic/rsgain). Users are required to install rsgain and set its path in the plugin settings before use.
+MusicBrainz Picard 3 plugin to calculate ReplayGain information for tracks and albums according to the [ReplayGain 2.0 specification](https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification).
+
+## Requirements
+
+This plugin depends on the ReplayGain utility [rsgain](https://github.com/complexlogic/rsgain).
+Users are required to install `rsgain` and **set its path in the plugin settings** before use.
 
 ## Usage
 
