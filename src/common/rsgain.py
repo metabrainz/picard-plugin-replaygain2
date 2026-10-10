@@ -77,9 +77,14 @@ def calculate_replaygain(api: PluginApi, pairs: list[ReplaygainablePair], option
     ) as process:
         (output, _unused) = process.communicate()
         rc = process.poll()
-        if rc:
-            raise ReplayGain2Error(f"rsgain returned non-zero code ({rc})")
         api.logger.debug(output)
+        if rc:
+            message = output.strip() if output else ""
+            if message:
+                raise ReplayGain2Error(
+                    f"rsgain returned non-zero code ({rc}): {message}"
+                )
+            raise ReplayGain2Error(f"rsgain returned non-zero code ({rc})")
         lines = output.splitlines()
 
     rsgain_album_row_length = 1 if config.should_calculate_album_gain else 0
