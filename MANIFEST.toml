@@ -41,8 +41,10 @@ homepage = "https://github.com/metabrainz/picard-plugin-replaygain2"
 report_bugs_to = "https://tickets.metabrainz.org/issues/?filter=13410"
 
 [description_i18n]
+ca = "Calcula la informació de ReplayGain de pistes i àlbums"
 de = "Berechnet ReplayGain-Informationen für Titel und Alben"
 nl = "Berekent ReplayGain-informatie over nummers en uitgaven"
+zh_CN = "为音轨和专辑计算 ReplayGain 信息"
 
 [long_description_i18n]
 de = """
@@ -73,4 +75,30 @@ Die folgenden Dateiformate werden unterstützt:
 - Musepack *(nur Stream-Version 8)* (.mpc)
 
 Dieses Plugin basiert auf dem ursprünglichen ReplayGain-Plugin von Philipp Wolfer und Sophist.
+"""
+zh_CN = """
+根据 [ReplayGain 2.0 规范](https://wiki.hydrogenaud.io/index.php?title=ReplayGain_2.0_specification). 为音轨和专辑计算 ReplayGain 信息
+此插件依赖于 ReplayGain 工具 [rsgain](https://github.com/complexlogic/rsgain). 用户必须在使用前安装 rsgain 并在插件设置中设置其路径。
+
+#### 使用方法
+选择一个或多个音轨、专辑或聚类，然后右键单击并选择 Plugin->Calculate ReplayGain.
+插件将为选定项目计算 ReplayGain 信息，并在元数据窗口中显示结果。单击保存按钮将标签写入文件。
+
+支持的文件格式：
+
+- MP3 (.mp3)
+- FLAC (.flac)
+- Ogg (.ogg, .oga, spx)
+- Opus (.opus)
+- MPEG-4 Audio (.m4a, .mp4)
+- Wavpack (.wv)
+- Monkey's Audio (.ape)
+- WMA (.wma)
+- MP2 (.mp2)
+- WAV (.wav)
+- AIFF (.aiff)
+- TAK (.tak)
+- MusePack *(仅限流媒体版本 8)* (.mpc)
+
+此插件基于 Philipp Wolfer 和 Sophist 的原始 ReplayGain 插件。
 """
