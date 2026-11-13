@@ -1,5 +1,5 @@
 import os
-from typing import ClassVar, override
+from typing import ClassVar
 
 from picard.plugin3.api import OptionsPage, PageOptionConfigs
 from PyQt6.QtWidgets import QFileDialog
@@ -83,7 +83,6 @@ class ReplayGain2OptionsPage(OptionsPage):
                     f"{option_opus}.both", "Write both standard and R128 tags"
                 )
 
-    @override
     def load(self):
         self.ui.rsgain_command.setText(self.plugin_config.rsgain_path)
         self.ui.album_tags.setChecked(self.plugin_config.should_calculate_album_gain)
@@ -105,7 +104,6 @@ class ReplayGain2OptionsPage(OptionsPage):
         self.ui.opus_m23.setChecked(self.plugin_config.should_opus_r128_to_m23)
         self.ui.album_load.setChecked(self.plugin_config.should_calculate_on_album_load)
 
-    @override
     def save(self):
         self.plugin_config.rsgain_path = self.ui.rsgain_command.text()
         self.plugin_config.should_calculate_album_gain = self.ui.album_tags.isChecked()

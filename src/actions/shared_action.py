@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from functools import partial
+from typing import Generic, TypeVar
 
 from picard.plugin3.api import BaseAction
 from picard.util import thread
@@ -10,8 +11,10 @@ from ..common.statusbar import StatusbarMessages
 from ..common.util import does_rsgain_path_still_exist
 from ..options.config import PluginConfig
 
+T = TypeVar("T")
 
-class BaseReplayGainAction[T](BaseAction):
+
+class BaseReplayGainAction(BaseAction, Generic[T]):
     def __init__(self):
         super().__init__()
         self.num_items = 0
